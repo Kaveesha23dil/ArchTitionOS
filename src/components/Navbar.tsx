@@ -5,6 +5,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Sparkles, Layers, Cpu, Code2 } from "lucide-react";
 
+gsap.registerPlugin(useGSAP);
+
 export function Navbar() {
   const navRef = useRef<HTMLElement>(null);
 

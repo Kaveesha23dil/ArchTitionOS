@@ -5,6 +5,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Play, Pause, RotateCcw, FastForward, Sliders, Box, Layers, Sparkles } from "lucide-react";
 
+gsap.registerPlugin(useGSAP);
+
 export function GsapPlayground() {
   const labRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);

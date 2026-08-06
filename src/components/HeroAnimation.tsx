@@ -5,6 +5,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ArrowRight, Sparkles, Play, ShieldCheck, Zap } from "lucide-react";
 
+gsap.registerPlugin(useGSAP);
+
 export function HeroAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const orbRef1 = useRef<HTMLDivElement>(null);
