@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Cpu,
   Share2,
-  Smartphone,
   Activity,
   ShieldCheck,
   Layers,
@@ -92,6 +91,20 @@ const DIFFERENTIATORS = [
   },
 ];
 
+/* Every element the entrance animation touches. Kept in one place so the
+   fail-safe reveal can guarantee none of them are left hidden. */
+const ANIMATED_SELECTOR = [
+  ".about-eyebrow",
+  ".about-headline",
+  ".about-lede",
+  ".about-problem",
+  ".about-bridge",
+  ".about-pain",
+  ".about-core-card",
+  ".about-diff-item",
+  ".about-closing",
+].join(", ");
+
 /* ────────────────────────────────────────────────
    COMPONENT
    ──────────────────────────────────────────────── */
@@ -101,127 +114,163 @@ export const AboutSection: React.FC = () => {
 
   useGSAP(
     () => {
+      const root = sectionRef.current;
+      if (!root) return;
+
+      /* Force everything into its final, visible state. This is the safety
+         net: whatever goes wrong, the content is readable. */
+      const revealAll = () => {
+        gsap.set(root.querySelectorAll(ANIMATED_SELECTOR), {
+          autoAlpha: 1,
+          x: 0,
+          y: 0,
+          clearProps: "transform",
+        });
+        root
+          .querySelectorAll(".about-core-card")
+          .forEach((el) => el.classList.add("is-revealed"));
+      };
+
       const prefersReduced = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
       ).matches;
 
       if (prefersReduced) {
-        gsap.set(
-          [
-            ".about-eyebrow",
-            ".about-headline",
-            ".about-lede",
-            ".about-problem",
-            ".about-bridge",
-            ".about-core-card",
-            ".about-diff-item",
-            ".about-closing",
-          ],
-          { autoAlpha: 1, y: 0, clearProps: "transform" }
-        );
+        revealAll();
         return;
       }
 
-      const build = (
-        targets: gsap.TweenTarget,
-        vars: gsap.TweenVars,
-        trigger: string
-      ) =>
-        gsap.from(targets, {
-          ...vars,
-          scrollTrigger: {
+      try {
+        /* Hide, then reveal on scroll. Elements are resolved to real nodes
+           (not selector strings) so nothing depends on selector scoping. */
+        const reveal = (
+          selector: string,
+          fromVars: gsap.TweenVars,
+          toVars: gsap.TweenVars,
+          triggerSelector: string
+        ) => {
+          const els = Array.from(root.querySelectorAll(selector));
+          const trigger = root.querySelector(triggerSelector);
+          if (!els.length || !trigger) return;
+
+          gsap.set(els, { autoAlpha: 0, ...fromVars });
+
+          ScrollTrigger.create({
             trigger,
-            start: "top 82%",
+            start: "top 85%",
             once: true,
-          },
-        });
+            onEnter: () => {
+              gsap.to(els, {
+                autoAlpha: 1,
+                x: 0,
+                y: 0,
+                overwrite: "auto",
+                ...toVars,
+                /* Drop the inline transform once we land, so CSS hover
+                   transforms are not permanently overridden. */
+                clearProps: "transform",
+                onComplete: () =>
+                  els.forEach((el) => el.classList.add("is-revealed")),
+              });
+            },
+          });
+        };
 
-      /* ── Heading block ── */
-      build(
-        ".about-eyebrow",
-        { autoAlpha: 0, y: 14, duration: 0.5, ease: "power3.out" },
-        ".about-head"
-      );
-      build(
-        ".about-headline",
-        { autoAlpha: 0, y: 26, duration: 0.7, delay: 0.08, ease: "power3.out" },
-        ".about-head"
-      );
-      build(
-        ".about-lede",
-        { autoAlpha: 0, y: 18, duration: 0.6, delay: 0.2, ease: "power3.out" },
-        ".about-head"
-      );
+        /* ── Heading block ── */
+        reveal(
+          ".about-eyebrow",
+          { y: 14 },
+          { duration: 0.5, ease: "power3.out" },
+          ".about-head"
+        );
+        reveal(
+          ".about-headline",
+          { y: 26 },
+          { duration: 0.7, delay: 0.08, ease: "power3.out" },
+          ".about-head"
+        );
+        reveal(
+          ".about-lede",
+          { y: 18 },
+          { duration: 0.6, delay: 0.2, ease: "power3.out" },
+          ".about-head"
+        );
 
-      /* ── Problem → approach split ── */
-      build(
-        ".about-problem",
-        { autoAlpha: 0, x: -28, duration: 0.7, ease: "power3.out" },
-        ".about-split"
-      );
-      build(
-        ".about-bridge",
-        { autoAlpha: 0, x: 28, duration: 0.7, delay: 0.12, ease: "power3.out" },
-        ".about-split"
-      );
-      build(
-        ".about-pain",
-        {
-          autoAlpha: 0,
-          y: 12,
-          duration: 0.45,
-          stagger: 0.1,
-          delay: 0.25,
-          ease: "power2.out",
-        },
-        ".about-split"
-      );
+        /* ── Problem → approach split ── */
+        reveal(
+          ".about-problem",
+          { x: -28 },
+          { duration: 0.7, ease: "power3.out" },
+          ".about-split"
+        );
+        reveal(
+          ".about-bridge",
+          { x: 28 },
+          { duration: 0.7, delay: 0.12, ease: "power3.out" },
+          ".about-split"
+        );
+        reveal(
+          ".about-pain",
+          { y: 12 },
+          { duration: 0.45, stagger: 0.1, delay: 0.25, ease: "power2.out" },
+          ".about-split"
+        );
 
-      /* ── Core component cards ── */
-      build(
-        ".about-core-card",
-        {
-          autoAlpha: 0,
-          y: 40,
-          duration: 0.65,
-          stagger: 0.13,
-          ease: "power3.out",
-        },
-        ".about-core"
-      );
+        /* ── Core component cards ── */
+        reveal(
+          ".about-core-card",
+          { y: 40 },
+          { duration: 0.65, stagger: 0.13, ease: "power3.out" },
+          ".about-core"
+        );
 
-      /* ── Differentiators ── */
-      build(
-        ".about-diff-item",
-        {
-          autoAlpha: 0,
-          y: 24,
-          duration: 0.55,
-          stagger: 0.09,
-          ease: "power2.out",
-        },
-        ".about-diff"
-      );
+        /* ── Differentiators ── */
+        reveal(
+          ".about-diff-item",
+          { y: 24 },
+          { duration: 0.55, stagger: 0.09, ease: "power2.out" },
+          ".about-diff"
+        );
+        reveal(
+          ".about-closing",
+          { y: 18 },
+          { duration: 0.6, ease: "power3.out" },
+          ".about-diff"
+        );
 
-      build(
-        ".about-closing",
-        { autoAlpha: 0, y: 18, duration: 0.6, ease: "power3.out" },
-        ".about-diff"
-      );
+        /* ── Ambient pulse travelling the full height of the divider rail ── */
+        const rail = root.querySelector<HTMLElement>(".about-rail");
+        const pulse = root.querySelector<HTMLElement>(".about-rail-pulse");
+        if (rail && pulse) {
+          gsap.to(pulse, {
+            y: () => Math.max(rail.offsetHeight - pulse.offsetHeight, 0),
+            duration: 4.5,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            invalidateOnRefresh: true,
+          });
+        }
 
-      /* ── Ambient scanline drift on the divider rail ── */
-      gsap.to(".about-rail-pulse", {
-        yPercent: 320,
-        duration: 4.5,
-        repeat: -1,
-        ease: "sine.inOut",
-        yoyo: true,
-      });
+        /* The hero above is 100svh and web fonts settle after mount, both of
+           which move our trigger points. Recalculate once things are stable;
+           refresh() also fires any trigger that is already in view. */
+        const refresh = () => ScrollTrigger.refresh();
+        const raf = requestAnimationFrame(refresh);
+        window.addEventListener("load", refresh);
+        document.fonts?.ready.then(refresh).catch(() => {});
 
-      /* Web fonts settling can shift layout under the triggers — recalculate
-         start/end positions once everything has loaded. */
-      if (document.fonts?.status !== "loaded") {
-        document.fonts?.ready.then(() => ScrollTrigger.refresh());
+        return () => {
+          cancelAnimationFrame(raf);
+          window.removeEventListener("load", refresh);
+        };
+      } catch (error) {
+        /* Never trade readable content for an animation. */
+        console.error(
+          "[AboutSection] scroll animation failed — revealing content",
+          error
+        );
+        revealAll();
       }
     },
     { scope: sectionRef }
@@ -357,7 +406,7 @@ export const AboutSection: React.FC = () => {
           {/* Divider rail — decorative */}
           <div
             aria-hidden="true"
-            className="relative hidden w-px overflow-hidden lg:block"
+            className="about-rail relative hidden w-px lg:block"
             style={{
               background:
                 "linear-gradient(to bottom, transparent, rgba(125,160,255,0.28) 20%, rgba(125,160,255,0.28) 80%, transparent)",
@@ -448,7 +497,7 @@ export const AboutSection: React.FC = () => {
               return (
                 <article
                   key={item.id}
-                  className="about-core-card group relative flex flex-col rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1"
+                  className="about-core-card group relative flex flex-col rounded-2xl p-6"
                   style={{
                     background:
                       "linear-gradient(150deg, rgba(11,16,34,0.6) 0%, rgba(5,11,27,0.9) 100%)",

@@ -207,6 +207,29 @@
 
 
 /* ============================================================
+   ABOUT SECTION
+   ============================================================ */
+/* Hover transitions are enabled only once the entrance animation has
+   finished. GSAP writes an inline `transform` while animating; letting CSS
+   transition that same property at the same time causes rubber-banding, and
+   a leftover inline transform would permanently outrank a hover transform. */
+.about-core-card {
+  transition: none;
+}
+
+.about-core-card.is-revealed {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.about-core-card.is-revealed:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99, 214, 255, 0.32);
+  box-shadow: 0 12px 36px rgba(47, 72, 165, 0.28);
+}
+
+/* ============================================================
    REDUCED MOTION
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
