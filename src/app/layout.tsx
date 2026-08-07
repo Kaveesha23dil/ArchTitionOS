@@ -9,9 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Vectorium Labs — Build Intelligent Systems That Work in the Real World",
+  title: "ArchTitan OS — An Operating System That Knows What You're Running",
   description:
-    "Vectorium Labs designs and delivers AI, software and data systems that improve workflows, strengthen decisions and scale with real business operations.",
+    "ArchTitan OS reallocates resources by workload type and workspace activity, not just process lists. Titan Hardware Manager, automatic GPU switching, kernel-native sandboxing and native Linux–Android interoperability — built into the OS, not bolted on.",
 };
 
 export default function RootLayout({

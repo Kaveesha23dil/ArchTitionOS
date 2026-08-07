@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { TerminalLoader } from "@/components/TerminalLoader";
 import { PremiumHero } from "@/components/hero/PremiumHero";
+import { AboutSection } from "@/components/about/AboutSection";
 
 export default function Home() {
   const [loaderDone, setLoaderDone] = useState(false);
@@ -16,6 +17,9 @@ export default function Home() {
 
       {/* Premium hero — always mounted, reveals after boot */}
       <PremiumHero animationReady={loaderDone} />
+
+      {/* 02 — About */}
+      <AboutSection />
     </main>
   );
 }
