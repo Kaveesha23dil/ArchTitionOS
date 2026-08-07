@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Final Year Project | Next.js + Tailwind CSS + GSAP",
-  description: "Advanced Web Platform built with Next.js App Router, Tailwind CSS, and GSAP animations.",
+  title: "ArchTitan OS — An Operating System That Knows What You're Running",
+  description:
+    "ArchTitan OS reallocates resources by workload type and workspace activity, not just process lists. Titan Hardware Manager, automatic GPU switching, kernel-native sandboxing and native Linux–Android interoperability — built into the OS, not bolted on.",
 };
 
 export default function RootLayout({
@@ -12,12 +20,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark h-full antialiased" suppressHydrationWarning>
-      <body className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-black" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} dark antialiased`}
+      suppressHydrationWarning
+    >
+      <body
+        className="min-h-screen overflow-x-hidden"
+        style={{
+          background: "#02040D",
+          color: "#F7F9FF",
+          fontFamily: "var(--font-inter), system-ui, -apple-system, sans-serif",
+        }}
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>
   );
 }
-
-
