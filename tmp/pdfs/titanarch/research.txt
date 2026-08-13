@@ -1,0 +1,367 @@
+
+===== PAGE 1 =====
+ArchTitan OS
+A Context-Aware Developer-Centric Linux Distribution
+with Integrated Cross-Device Ecosystem
+CIT-23-02-0025 Siluna Nusal
+CIT-23-02-0127 Kaveesha Dilshan
+CIT-23-02-0132 Chanika Anuradhi
+CIT-23-02-0359 Zumra Hasaan
+BSc (Hons) Software Engineering
+SLTC Research University
+Final Year Project Proposal
+June 8, 2026
+===== PAGE 2 =====
+1. Introduction
+Modern software development demands computing environments that are efficient,
+responsive, and deeply aligned with developer workflows. Existing general-purpose
+operating systems — including Windows, macOS, and mainstream Linux distributions
+— are architecturally ill-suited for this purpose. They maintain unnecessary
+background services, apply static resource management policies regardless of
+current activity, and remain entirely unaware of the developer's active workload
+context. The result is inefficient hardware utilization, degraded responsiveness during
+compilation-heavy tasks, and significant idle memory overhead.
+This project presents ArchTitan OS, a custom Arch Linux-based operating system
+engineered specifically for software developers. The system introduces context-
+aware resource management through its central component — the Titan Hardware
+Manager (THM) — an intelligent workload classification and resource orchestration
+daemon. THM is paired with a native cross-device ecosystem (TitanShare and
+TitanMirror) and a hardware monitoring subsystem (Neon Monitor) to deliver a unified,
+adaptive development environment.
+Critically, ArchTitan OS moves beyond conventional profile-based resource
+allocation. THM implements a multi-signal fusion classifier that reasons about active
+workloads through process tree analysis, window title semantics, and filesystem
+event watching — and extends this classification to the workspace topology level,
+managing resources across multiple Hyprland workspaces simultaneously using a
+tiered allocation model.
+2. Problem Statement
+Despite significant advances in processor architecture and memory technology,
+several critical limitations persist in modern operating systems as development
+environments:
+• Operating systems lack context-awareness, treating compilation workloads, idle
+states, and background processes with identical resource policies.
+• High idle resource consumption — commonly 2–4 GB RAM — reduces available
+system capacity for active development tasks.
+• CPU scheduling and memory management policies are static and reactive rather
+than predictive and workload-driven.
+• Hybrid GPU systems (integrated + discrete) require manual configuration, with no
+automatic workload-based switching.
+===== PAGE 3 =====
+• Cross-device communication between Linux and Android remains fragmented,
+requiring third-party tools with poor integration.
+• Modern IDEs (VS Code, Cursor, Zed, Windsurf) are polyglot environments —
+identical binaries serve system development, web development, and Android
+development, making binary-name-based workload classification architecturally
+insufficient.
+• Tiled window managers enable simultaneous multi-application workflows across split-
+screen layouts and multiple workspaces, rendering single-focus resource
+management models obsolete.
+• Developers face significant setup barriers when configuring optimized development
+environments from scratch.
+3. Research Objectives
+3.1 Main Objective
+To design and implement a context-aware Linux distribution that dynamically
+optimizes system resources based on real-time workload classification, workspace
+topology analysis, and cross-device integration — targeting sub-1 GB idle RAM on 8–
+16 GB developer hardware.
+3.2 Specific Objectives
+• Build a custom Linux distribution using Arch Linux (archiso) with a Hyprland-based
+desktop stack.
+• Develop THM — a C++17 root-privileged resource orchestration daemon with multi-
+signal workload classification.
+• Implement workspace-topology-aware resource management across split-screen
+layouts and multiple Hyprland workspaces.
+• Design an automated hybrid GPU switching mechanism using DRM/KMS device
+detection.
+• Create Neon Monitor — a lightweight hardware monitoring system using sysfs and
+procfs interfaces.
+• Develop TitanShare — a peer-to-peer Linux-Android file transfer and remote
+monitoring ecosystem.
+• Implement TitanMirror — real-time Android screen mirroring decoded via libavcodec
+and rendered through SDL2/DRM/KMS.
+4. Proposed Solution
+ArchTitan OS is structured as a layered system architecture:
+• Base Layer: Arch Linux with minimal packages, BTRFS filesystem, and a custom
+archiso-built ISO.
+===== PAGE 4 =====
+• Desktop Layer: Hyprland (Wayland compositor), SDDM display manager, GRUB
+bootloader, Calamares graphical installer.
+• System Services Layer: THM daemon, GPU switcher, Neon Monitor, BTRFS
+snapshot manager.
+• Application Layer: TitanShare, TitanMirror, CoreAI, TUI installer.
+The central architectural component is the Titan Hardware Manager (THM) — a C++17
+daemon running with root privileges that hooks into Hyprland's IPC socket, classifies active
+developer workflows in real time, and orchestrates system resources using SIGSTOP/
+SIGCONT process management, dynamic kernel parameter tuning, and a workspace-tier-
+based memory allocation model.
+5. Methodology
+5.1 System Development
+• ISO built using archiso with a custom package manifest and post-install hooks.
+• Custom TUI installer developed in Bash with ANSI rendering for partition
+management and system configuration.
+• Core services implemented in C++17 for performance efficiency with minimal runtime
+overhead.
+• Android components built with Kotlin and Jetpack Compose.
+5.2 Titan Hardware Manager (THM) — Context-Aware Resource
+Orchestration
+THM is the centerpiece of TitanArch OS. It operates as a root-privileged daemon with
+the following implemented subsystems:
+5.2.1 Multi-Signal Fusion Workload Classifier
+The fundamental challenge in workload classification is that modern IDEs — VS Code,
+Cursor, Zed, Windsurf, Antigravity — are polyglot environments. The same binary
+handles system development, web development, and Android development. Binary-
+name-based classification is architecturally insufficient.
+THM implements a three-signal fusion classifier with descending confidence priority:
+• Signal 1 — /proc Child Process Walk (Highest Confidence): THM walks /proc/<pid>/
+children and reads cmdline of each child process. LSP servers and build daemons
+are definitive workload indicators — clangd or rust-analyzer indicates SYSTEM_DEV;
+tsserver or vite indicates WEB_DEV; gradle or adb indicates ANDROID_DEV; ollama
+or llama-server sets an AI modifier flag.
+• Signal 2 — Window Title Parsing (Medium Confidence): Active window titles expose
+the currently open file or workspace. Pattern matching on extensions (.cpp, .rs,
+CMakeLists.txt for SYSTEM_DEV; .ts, .jsx, package.json for WEB_DEV; build.gradle,
+===== PAGE 5 =====
+AndroidManifest.xml for ANDROID_DEV) provides reliable classification when Signal
+1 is inconclusive.
+• Signal 3 — inotify Project Root Filesystem Watch (Tiebreaker): THM reads /proc/
+<pid>/cwd to obtain the working directory and stats for project marker files. This
+reuses THM's existing inotify infrastructure from config hot-reload, adding zero new
+dependencies.
+Known IDE binaries — code, cursor, zed, windsurf, antigravity, fleet, android-studio — all
+route through the fusion classifier rather than direct profile mapping.
+Signal Method Confidence Infrastructure Reused
+Child Process Walk /proc/<pid>/children + High Rogue DM Guard /proc
+cmdline scanner
+Window Title Parse Hyprland IPC activewindow Medium Existing IPC socket listener
+event
+Project Root Watch /proc/<pid>/cwd + inotify Tiebreaker Config hot-reload inotify fd
+stat
+5.2.2 Workspace Composite Profile Scoring
+Hyprland's tiling architecture allows multiple applications to remain active
+simultaneously, making traditional single-focus resource management ineffective.
+THM addresses this through a workspace-level composite scoring system that
+evaluates all windows within the active workspace.
+Each window is assigned a resource weight based on process activity. Build daemons
+and LSP services receive higher weights due to continuous resource consumption,
+while focused windows are treated as resource hints rather than allocation
+authorities. The highest-weighted classification determines the workspace's dominant
+WorkloadType.
+When multiple workload types coexist, THM enables a MULTI_CONTEXT mode that
+protects critical development services and prevents aggressive memory reclamation.
+Resource management is implemented through a hybrid architecture combining
+POSIX signals and cgroup v2. Long-inactive workspace processes may be suspended
+and resumed using SIGSTOP and SIGCONT, while dynamic resource control is
+handled through cgroup v2 features such as cgroup.freeze, cpu.weight, and
+memory.high. Critical system conditions are managed through staged process
+termination using SIGTERM and SIGKILL.
+5.2.3 Cross-Workspace Tier System
+Background workspaces are not idle — build daemons running in a background
+workspace continue consuming RAM regardless of workspace visibility. THM
+implements a three-tier workspace management system evaluated on every Hyprland
+workspace switch event:
+===== PAGE 6 =====
+Tier Condition Memory SIGSTOP Policy
+Budget
+ACTIVE Currently visible on any monitor 70% ceiling Managed per composite
+profile
+PROTECTED Background with live daemons 20% Daemon processes never
+(gradle, clangd) reservation frozen
+FREEZEABL Background, no daemons, age > 5% budget All non-daemon processes
+E 15 min SIGSTOP
+Multi-monitor support is handled by querying the Hyprland monitors IPC endpoint.
+Any workspace assigned to a physical monitor is treated as ACTIVE regardless of
+focus — both displays receive full tier-1 resource allocation.
+5.2.4 Workspace Age Decay
+THM tracks last_active_ms per workspace. Workspaces untouched for 5–15 minutes
+have their non-daemon processes reniced to +5. Workspaces untouched beyond 15
+minutes trigger hard decay — all non-daemon, non-LSP processes receive SIGSTOP.
+This mirrors the importance-score decay used in Android's Low Memory Killer,
+applied at workspace granularity rather than process granularity.
+5.2.5 SIGSTOP/SIGCONT Memory Management
+THM's primary memory pressure relief mechanism is surgical process suspension
+using SIGSTOP and SIGCONT signals. The frozen PID registry tracks all suspended
+processes with tier metadata. Memory pressure gating reads RssAnon from /proc/
+<pid>/status to make per-process eviction decisions based on actual anonymous
+memory consumption rather than virtual address space. Debounce logic prevents
+oscillation on rapid workspace switches.
+5.2.6 Session Enforcement — Rogue DM Guard
+A four-layer session enforcement system prevents unauthorized display manager
+intrusion that could destabilize the Hyprland session: Pacman hooks block DM
+installation at package manager level; IgnorePkg prevents accidental upgrades;
+systemd unit masking disables known DM services; a /proc-scanning Rogue DM
+Guard runs as part of THM's cycle to detect and terminate any display manager
+processes that bypass the first three layers.
+5.2.7 Dynamic Kernel Tuning and TOML Configuration
+THM applies profile-specific kernel parameter tuning — CPU governor selection
+(performance, schedutil, powersave), I/O scheduler assignment (bfq, mq-deadline),
+and vm.swappiness adjustment — based on the active workspace composite profile.
+All configuration is TOML-based with inotify hot-reload, allowing live parameter
+changes without daemon restart.
+===== PAGE 7 =====
+5.3 GPU Switching Mechanism
+The Auto GPU Switcher detects hybrid GPU configurations through DRM/KMS device
+enumeration via sysfs. On workload classification, it injects appropriate environment
+variables (DRI_PRIME, __NV_PRIME_RENDER_OFFLOAD) and routes rendering to the
+optimal GPU — integrated for power-efficient tasks, discrete for compilation and
+graphics workloads — without requiring user intervention or session restart.
+5.4 TitanShare — Cross-Device Ecosystem
+TitanShare is a peer-to-peer Linux-Android communication daemon implemented in
+C++ on the host side and Kotlin/Jetpack Compose on Android. Device discovery uses
+Avahi mDNS for zero-configuration LAN detection. File transfer operates over a
+custom TCP protocol achieving sustained throughput exceeding 10 MB/s on local
+networks. The Android application additionally provides remote system monitoring of
+the TitanArch host — displaying real-time CPU, memory, and process state — and
+remote control capabilities.
+5.5 TitanMirror — Android Screen Mirroring
+TitanMirror enables real-time Android screen mirroring to the TitanArch desktop
+without ADB dependency. The Android component uses MediaProjection API to
+capture screen frames, encodes them as H.264 via hardware encoder, and streams
+over TCP. The Linux receiver decodes the H.264 stream using libavcodec and renders
+frames through SDL2 with DRM/KMS backend for zero-copy display output.
+TitanMirror is integrated into TitanShare as a unified ecosystem component.
+6. Research Gap
+This project addresses several gaps that remain unresolved in current literature and
+existing systems:
+• No workspace-topology-aware resource orchestrator: Existing Linux resource
+management tools (systemd resource groups, cgroups v2, cpulimit) operate at the
+process or cgroup level without any awareness of window manager workspace
+topology. No published system treats workspace visibility and daemon lifecycle as
+orthogonal dimensions of resource allocation.
+• Binary-name workload classification is architecturally broken for polyglot IDEs: No
+existing WM-integrated resource manager addresses the fundamental problem that
+===== PAGE 8 =====
+modern development environments — Cursor, Zed, VS Code, Windsurf — are
+identical binaries serving radically different workloads. Multi-signal fusion
+classification via process tree analysis has not been applied in this context.
+• Focus semantics and resource semantics are conflated in all existing approaches:
+Current tools treat the focused window as the resource authority. THM establishes
+and implements the principle that focus is a hint, not authority — actual resource
+decisions are driven by process behavior observed through /proc, independent of
+input routing.
+• No native Linux-Android ecosystem exists at OS level: Cross-device integration
+remains fragmented across third-party tools (scrcpy, KDE Connect) with no OS-native
+integration. TitanShare and TitanMirror are embedded into the OS architecture rather
+than installed as applications.
+• Hyprland IPC as a resource management signal source is unexplored: No academic
+or systems literature documents the use of Hyprland's IPC socket as an input to a
+resource orchestration daemon. This represents genuinely novel integration at the
+intersection of compositor architecture and OS resource management.
+• Developer-focused Linux distributions lack automated setup: Existing developer
+distributions (Pop!_OS, Fedora, Manjaro) provide curated package sets but no
+context-aware runtime adaptation. The gap between installation and productive
+development environment remains entirely manual.
+7. Novelty of the Project
+ArchTitan OS introduces several technically novel contributions that distinguish it
+from existing work:
+• Workspace-Topology-Aware Resource Orchestration: THM is the first documented
+system to implement workspace-level composite profiling — treating the entire set of
+processes in a tiled workspace as a unified resource context with weighted scoring,
+rather than managing individual windows in isolation.
+• Focus-Decoupled Resource Management: The explicit architectural principle that
+window focus is a UI input-routing concept distinct from resource allocation authority.
+THM allocates resources based on what processes are doing, not what the user is
+looking at.
+• Cross-Workspace Daemon Lifecycle Management: The three-tier workspace system
+(ACTIVE, PROTECTED, FREEZEABLE) with build-daemon protection ensures that
+background compilation workloads are never disrupted by workspace switching — a
+failure mode that no existing tool addresses.
+• Multi-Signal Fusion IDE Classification: A three-signal classifier combining /proc
+process tree analysis, window title semantics, and inotify filesystem watching to
+correctly classify polyglot IDE workloads — solving a problem that makes binary-
+name-based approaches architecturally unsound for modern development tools.
+• Hyprland IPC as Resource Management Input: Novel integration of a Wayland
+compositor's IPC protocol as a real-time workload signal source for a system
+resource daemon.
+• Unified OS-Native Cross-Device Ecosystem: TitanShare and TitanMirror are
+embedded at OS architecture level, not installed as applications — providing device
+discovery, file transfer, screen mirroring, and remote monitoring as first-class OS
+capabilities.
+===== PAGE 9 =====
+8. Expected Outcomes
+• Idle memory consumption below 1 GB on 8–16 GB developer hardware.
+• Measurable improvement in system responsiveness during workspace-switching
+under memory pressure.
+• Correct workload classification across polyglot IDE scenarios (VS Code, Cursor, Zed
+serving different workload types).
+• Zero build daemon interruptions during workspace switching in multi-workspace
+development sessions.
+• Sustained file transfer throughput exceeding 10 MB/s on local networks via
+TitanShare.
+• Sub-100ms Android screen mirroring latency via TitanMirror on LAN.
+• Seamless GPU switching between integrated and discrete with no user intervention
+required.
+9. Evaluation Plan
+The system will be evaluated through quantitative benchmarks and qualitative
+developer experience assessment:
+Component Metric Method
+THM — Idle RAM usage at idle free -m, /proc/meminfo baseline vs TitanArch
+Memory
+THM — Classifier Correct profile Controlled workload scenarios across 4 profile
+Accuracy assignment rate types
+THM — Workspace Build daemon Workspace switching during active Gradle/Cargo
+Tier System interruption rate builds
+THM — Response Profile switch time on Hyprland IPC event to kernel param change
+Latency workspace change timestamp delta
+GPU Switcher Switching latency Time from workload detection to DRI_PRIME
+injection
+TitanShare Transfer throughput iperf3-calibrated TCP file transfer, measured MB/s
+TitanMirror Frame latency Capture-to-render pipeline timestamp analysis
+System Stability Uptime under mixed 72-hour stress test — compilation + browsing +
+workloads Android dev simultaneously
+10. Tools and Technologies
+===== PAGE 10 =====
+Category Technologies
+Languages C++17, Python, Bash, Kotlin
+OS Base Arch Linux (archiso)
+Desktop Stack Hyprland (Wayland), SDDM, GRUB, Calamares
+Android Frameworks Jetpack Compose, MediaProjection API, Hardware H.264 Encoder
+System Interfaces sysfs, procfs, DRM/KMS, Hyprland IPC socket, inotify, SIGSTOP/
+SIGCONT
+Protocols TCP, mDNS (Avahi), H.264 over TCP
+Media / Decode libavcodec (FFmpeg), SDL2
+AI Inference Ollama (qwen2.5-coder:14b, deepseek-r1:14b)
+Configuration TOML with inotify hot-reload
+Build Tools archiso, CMake, Gradle
+11. Future Work
+• GUI-based THM configuration panel for live profile tuning without TOML editing.
+• Predictive workspace pre-warming — use workspace access patterns to pre-thaw
+FREEZEABLE processes before the user switches to them.
+• Custom package repository with signed ISO distribution for public TitanArch releases.
+• AI_DEV profile modifier — dedicated resource ceiling for local inference workloads
+that spike RAM unpredictably alongside existing development profiles.
+• Extending THM's workspace tier system to X11 window managers for broader
+distribution compatibility.
+12. Conclusion
+ArchTitan OS represents a fundamental architectural shift from static, general-
+purpose operating systems to adaptive, developer-centric environments. The Titan
+Hardware Manager advances the state of the art in Linux resource management by
+introducing workspace-topology-aware orchestration — recognizing that the
+developer's workspace structure, not just the focused window, is the correct unit of
+resource allocation.
+By establishing the principle that focus semantics and resource semantics are
+orthogonal concerns, implementing multi-signal workload classification that handles
+the polyglot IDE problem, and managing daemon lifecycles independently of
+workspace visibility, THM delivers intelligent resource management that existing tools
+— operating at process or cgroup level in isolation from the window manager —
+cannot replicate.
+===== PAGE 11 =====
+Combined with TitanShare, TitanMirror, CoreAI, and a sub-1 GB idle memory target,
+ArchTitan OS demonstrates a practical and technically rigorous approach to the
+problem of developer-centric operating system design.
+13. References
+1. Silberschatz, A., Galvin, P. B., & Gagne, G. (2018). Operating System Concepts (10th ed.).
+Wiley.
+2. Love, R. (2010). Linux Kernel Development (3rd ed.). Addison-Wesley.
+3. Gorman, M. (2004). Understanding the Linux Virtual Memory Manager. Prentice Hall.
+4. Gregg, B. (2020). Systems Performance: Enterprise and the Cloud (2nd ed.). Pearson.
+5. Waldspurger, C. A. (1995). Lottery Scheduling: Flexible Proportional-Share Resource
+Management. MIT.
+6. Shen, K., & Peterson, L. L. (1998). Processor Scheduling for Multi-Programmed Workloads.
+ACM SIGMETRICS.
+7. Merkel, D. (2014). Docker: Lightweight Linux Containers for Consistent Development. Linux
+Journal.
+8. Corbet, J., Rubini, A., & Kroah-Hartman, G. (2005). Linux Device Drivers (3rd ed.). O'Reilly.
+9. McKenney, P. E. (2004). RCU Usage in the Linux Kernel. Linux Symposium.
+10. Payer, M., et al. (2015). Control-Flow Integrity. USENIX Security Symposium.
+11. Android Open Source Project. (2023). Low Memory Killer Daemon (lmkd). Google.
+12. Varda, K. (2015). Cap'n Proto and the /proc Filesystem. Protocol Labs.

@@ -1,92 +1,137 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TerminalLoader } from "@/components/TerminalLoader";
 
-const A="https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000";
-const img=(n:string)=>`${A}/${n}`;
-const coaches=[
-  {words:["Expert","Result-","Driven","Coaching"],image:"5.webp",name:"Marco Vidal",role:"Head Coach"},
-  {words:["Sharper","Faster","Stronger","Player"],image:"4.webp",name:"Elena Sokolova",role:"Performance Coach"},
-  {words:["Future","Champions","Start","Here"],image:"1.webp",name:"James Okoro",role:"Juniors Lead"},
-];
-const gear=[
-  {image:"2.webp",brand:"Baseline Pro",title:"Featured Gear",cta:"Shop the kit"},
-  {image:"3.webp",brand:"Court Series",title:"Summer Drop",cta:"View the line"},
-  {image:"5.webp",brand:"Academy Kit",title:"Junior Range",cta:"Browse juniors"},
-];
-const programs=[
-  ["01","Junior Development","Fundamentals, footwork, and match play for ages 6–14.","junior"],
-  ["02","Performance Squad","High-volume training for competitive and ranked players.","performance"],
-  ["03","Adult Clinics","Small-group sessions to sharpen technique and fitness.","adult"],
-  ["04","Private Coaching","One-to-one sessions tailored to your goals and schedule.","private"],
-];
-const testimonials=[
-  ["I added a level to my serve in one season. The coaching is detailed and it actually sticks.","Priya Anand","Performance Squad"],
-  ["Best courts in the city and a team that treats every member like a competitor.","Lukas Brenner","Adult Clinics"],
-  ["My daughter went from shy beginner to club champion. Worth every minute.","Dana Okafor","Parent, Junior Development"],
-];
+const Arrow=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>;
+const Mark=()=> <svg className="mark" viewBox="0 0 44 44" fill="none"><path d="M22 3 39 12.5v19L22 41 5 31.5v-19L22 3Z" stroke="currentColor" strokeWidth="2"/><path d="m14 28 8-17 8 17M17 22h10" stroke="currentColor" strokeWidth="2"/></svg>;
+const Label=({children}:{children:React.ReactNode})=><div className="label"><i/>{children}</div>;
 
-function Ball(){return <svg className="ball" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><path d="M4.8 5.6a9 9 0 0 0 0 12.8M19.2 5.6a9 9 0 0 1 0 12.8"/></svg>}
-function Arrow(){return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>}
-function Brand(){return <a className="brand" href="#top"><Ball/><span>Baseline</span></a>}
-function Eyebrow({children,light=false}:{children:React.ReactNode,light?:boolean}){return <div className={`eyebrow ${light?"light":""}`}><i/>{children}</div>}
-function Lines({children}:{children:string[]}){return <>{children.map((x,i)=><span className="line reveal" style={{transitionDelay:`${i*100}ms`}} key={x}>{x}</span>)}</>}
-function Dots({active,set,light=false}:{active:number,set:(n:number)=>void,light?:boolean}){return <div className={`dots ${light?"light":""}`}>{[0,1,2].map(i=><button aria-label={`Slide ${i+1}`} aria-current={i===active} onClick={()=>set(i)} key={i}><i/></button>)}</div>}
+const features=[
+  {n:"01",title:"Titan Hardware Manager",tag:"Core research contribution",text:"A C++17 root-privileged daemon that classifies developer workloads and orchestrates CPU, memory, I/O and process state using real-time system signals.",meta:"Hyprland IPC · cgroup v2 · /proc"},
+  {n:"02",title:"Auto GPU Switcher",tag:"Adaptive graphics",text:"Detects hybrid GPU systems through DRM/KMS and routes workloads to integrated or discrete graphics without a restart or manual configuration.",meta:"DRI_PRIME · sysfs · DRM/KMS"},
+  {n:"03",title:"Neon Monitor",tag:"Observability",text:"A lightweight native monitor for live CPU, memory, thermal and process telemetry with minimal runtime overhead.",meta:"procfs · sysfs · native UI"},
+  {n:"04",title:"TitanShare",tag:"Cross-device ecosystem",text:"Zero-configuration Linux–Android discovery, peer-to-peer file transfer, remote monitoring and controls over the local network.",meta:"C++ · Kotlin · TCP · mDNS"},
+  {n:"05",title:"TitanMirror",tag:"Real-time media",text:"Native Android screen capture and H.264 streaming, decoded with libavcodec and rendered through SDL2 using a DRM/KMS backend.",meta:"MediaProjection · H.264 · SDL2"},
+  {n:"06",title:"Developer-First Base",tag:"Complete distribution",text:"A minimal Arch Linux system with Hyprland, BTRFS snapshots, Calamares installation and a purpose-built developer environment.",meta:"archiso · BTRFS · Wayland"},
+];
+const metrics=[["< 1 GB","Target idle RAM"],["< 100 ms","Mirror latency target"],["> 10 MB/s","Transfer throughput"],["72 h","Mixed-workload stress test"]];
+const researchers=[
+  ["CIT-23-02-0025","Siluna Nusal"],["CIT-23-02-0127","Kaveesha Dilshan"],["CIT-23-02-0132","Chanika Anuradhi"],["CIT-23-02-0359","Zumra Hasaan"]
+];
+const refs=[
+  "Silberschatz, Galvin & Gagne — Operating System Concepts, 10th ed.","Robert Love — Linux Kernel Development, 3rd ed.","Mel Gorman — Understanding the Linux Virtual Memory Manager","Brendan Gregg — Systems Performance, 2nd ed.","Android Open Source Project — Low Memory Killer Daemon (lmkd)","Corbet, Rubini & Kroah-Hartman — Linux Device Drivers, 3rd ed."
+];
 
 export default function Home(){
-  const [ready,setReady]=useState(false),[menu,setMenu]=useState(false),[modal,setModal]=useState(false),[sent,setSent]=useState(false);
-  const [coach,setCoach]=useState(0),[product,setProduct]=useState(0);
+  const [ready,setReady]=useState(false),[menu,setMenu]=useState(false),[activeSignal,setActiveSignal]=useState(0);
   useEffect(()=>{
-    window.scrollTo(0,0); document.documentElement.classList.add("locked");
-    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("seen")}),{threshold:.12});
-    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
-    const resize=()=>{const s=16-(16*(((1920-innerWidth)/1920)*100*.6666))/100;if(s>16)document.documentElement.style.fontSize=s+"px";else document.documentElement.style.removeProperty("font-size")};resize();addEventListener("resize",resize);
-    return()=>{io.disconnect();removeEventListener("resize",resize)};
+    scrollTo(0,0);document.documentElement.classList.add("locked");
+    const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("visible")),{threshold:.12});
+    document.querySelectorAll(".reveal").forEach(x=>io.observe(x));
+    const esc=(e:KeyboardEvent)=>e.key==="Escape"&&setMenu(false);addEventListener("keydown",esc);
+    return()=>{io.disconnect();removeEventListener("keydown",esc)};
   },[]);
-  useEffect(()=>{if(!ready)return;const t=setInterval(()=>setProduct(v=>(v+1)%3),3800);return()=>clearInterval(t)},[ready]);
-  useEffect(()=>{document.documentElement.classList.toggle("locked",!ready||menu||modal)},[ready,menu,modal]);
-  useEffect(()=>{const esc=(e:KeyboardEvent)=>{if(e.key==="Escape"){setMenu(false);setModal(false)}};addEventListener("keydown",esc);return()=>removeEventListener("keydown",esc)},[]);
-  const openModal=()=>{setMenu(false);setSent(false);setModal(true)};
-  const submit=(e:FormEvent)=>{e.preventDefault();setTimeout(()=>setSent(true),650)};
-  const closeOverlays=()=>{setMenu(false);setModal(false)};
-  const finishLoading=()=>{setReady(true);document.documentElement.classList.remove("locked")};
-  const c=coaches[coach],g=gear[product];
+  useEffect(()=>{document.documentElement.classList.toggle("locked",!ready||menu)},[ready,menu]);
+  const finish=()=>{setReady(true);document.documentElement.classList.remove("locked")};
   return <>
-    {!ready&&<TerminalLoader onComplete={finishLoading}/>} 
-    <main id="top" className={ready?"ready":""}>
-      <section className="hero">
-        <div className="hero-bg"><img src={img("hero/hero-court.webp")} alt="Player lunging for a shot on a hard court" fetchPriority="high"/></div>
-        <header><nav className="desktop"><a href="#programs">Programs & Coaches</a><a href="#facilities">Club & Events</a></nav><Brand/><div className="header-right"><button className="book desktop-sm" onClick={openModal}>Book a Visit</button><button className="burger" onClick={()=>setMenu(true)} aria-label="Open menu"><i/><i/></button></div></header>
-        <h1>{["Own","The","Court"].map((w,i)=><span style={{transitionDelay:`${i*140}ms`}} key={w}>{w}</span>)}</h1>
-        <div className="hero-bottom"><p className="tag"><span>Show Up,</span><span>Level Up</span></p><div className="hero-cards">
-          <div className="gear-card reveal"><div className="glass"><img src={img(g.image)} alt="Featured tennis gear"/><div><b>{g.brand}</b><span>{g.title}</span><u>{g.cta} →</u></div></div><Dots active={product} set={setProduct} light/></div>
-          <article className="member glass reveal"><div><strong>9K+</strong><div className="avatars"><i/><i/><i/><i/></div><small>Members on court</small></div><img src={img("1.webp")} alt="Player waiting to return on a clay court"/></article>
-        </div></div>
+    {!ready&&<TerminalLoader onComplete={finish}/>} 
+    <header className="nav-shell">
+      <a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a>
+      <nav className="nav-links"><a href="#research">Research</a><a href="#architecture">Architecture</a><a href="#ecosystem">Ecosystem</a><a href="#evaluation">Evaluation</a></nav>
+      <a className="nav-cta" href="#team">Meet the team <Arrow/></a>
+      <button className="menu-button" onClick={()=>setMenu(true)} aria-label="Open menu"><i/><i/></button>
+    </header>
+
+    <main id="top" className={ready?"site-ready":""}>
+      <section className="hero research-hero">
+        <div className="hero-grid"/><div className="hero-glow"/>
+        <div className="hero-copy">
+          <div className="status"><i/> Final Year Research Project · 2026</div>
+          <h1><span>Context-aware.</span><span>Developer-centric.</span><span className="outline">Built on Linux.</span></h1>
+          <p>ArchTitan OS is an adaptive Arch Linux distribution that understands developer workloads, workspace topology and cross-device context—then allocates resources where they matter.</p>
+          <div className="hero-actions"><a className="primary" href="#research">Explore the research <Arrow/></a><a className="secondary" href="#architecture">View architecture</a></div>
+        </div>
+        <div className="hero-console reveal">
+          <div className="console-top"><span><i/><i/><i/></span><b>thmctl — live context</b><em>ACTIVE</em></div>
+          <div className="console-body">
+            <p><span className="muted">$</span> thmctl status --workspace active</p>
+            <p><span className="blue">workspace</span> <strong>dev/web-platform</strong></p>
+            <p><span className="blue">profile</span> <span className="green">WEB_DEV + AI</span></p>
+            <p><span className="blue">confidence</span> <strong>0.94</strong> <span className="muted">[process-tree]</span></p>
+            <div className="meter"><span>CPU weight</span><i><b style={{width:"82%"}}/></i><em>820</em></div>
+            <div className="meter"><span>Memory</span><i><b style={{width:"64%"}}/></i><em>70%</em></div>
+            <div className="workspace-row"><span className="active">1 ACTIVE</span><span>2 PROTECTED</span><span>3 FREEZEABLE</span></div>
+            <p className="event"><span className="green">✓</span> gradle daemon protected across workspace switch</p>
+          </div>
+        </div>
+        <div className="hero-foot"><span>SLTC Research University</span><span>BSc (Hons) Software Engineering</span><span>June 2026</span></div>
       </section>
 
-      <section className="trust section-pad">
-        <div className="trust-top"><div className="percent reveal"><b>100%</b><small>Coaching built around your game</small></div><article className="trust-note reveal"><b>#01</b><div><h3>Trusted by serious players</h3><p>From first-timers to nationally ranked juniors, players train here because the progress shows up on the scoreboard.</p></div></article></div>
-        <h2 className="ghost" key={coach}>{c.words.map((w,i)=><span className={i===2?"dark":""} key={w}>{w}</span>)}</h2>
-        <figure className="coach reveal"><img src={img(c.image)} alt={c.name}/><figcaption><b>{c.name}</b><small>{c.role}</small></figcaption></figure>
-        <div className="coach-controls"><button className="circle prev" onClick={()=>setCoach((coach+2)%3)}><Arrow/></button><Dots active={coach} set={setCoach}/><button className="circle" onClick={()=>setCoach((coach+1)%3)}><Arrow/></button></div>
+      <section id="research" className="intro section">
+        <div className="section-head reveal"><Label>Research premise</Label><h2>General-purpose operating systems do not understand <em>developer intent.</em></h2></div>
+        <div className="intro-grid">
+          <div className="intro-index">01 <span>/ 08</span></div>
+          <div className="intro-copy reveal"><p className="lead">Modern operating systems apply static policies to radically different activities: an active compilation, an idle browser and a background build daemon are treated without meaningful workflow context.</p><p>ArchTitan OS proposes a shift from process-only management to <strong>workspace-topology-aware resource orchestration</strong>. It observes what processes are doing, not simply which window has focus.</p></div>
+          <div className="problem-list reveal"><p><span>01</span>2–4 GB idle memory overhead</p><p><span>02</span>Static CPU and memory policies</p><p><span>03</span>Manual hybrid GPU switching</p><p><span>04</span>Fragmented Linux–Android tooling</p></div>
+        </div>
       </section>
 
-      <section id="programs" className="programs section-pad"><Eyebrow>Training programs</Eyebrow><h2><Lines>{["Built for","every level"]}</Lines></h2><ul>{programs.map((p,i)=><li id={p[3]} className="reveal" style={{transitionDelay:`${i*90}ms`}} key={p[0]}><a href={`#${p[3]}`}><span>{p[0]}</span><div><h3>{p[1]}</h3><p>{p[2]}</p></div><i className="row-arrow"><Arrow/></i></a></li>)}</ul></section>
+      <section id="architecture" className="architecture section dark-section">
+        <div className="section-head reveal"><Label>System architecture</Label><h2>One adaptive system.<br/><em>Four integrated layers.</em></h2><p>Built from the distribution base upward, each layer exposes native signals and services to the next.</p></div>
+        <div className="layer-stack reveal">
+          <div><b>04</b><span><strong>Application</strong><small>TitanShare · TitanMirror · CoreAI · TUI Installer</small></span><em>Developer experience</em></div>
+          <div><b>03</b><span><strong>System Services</strong><small>THM · GPU Switcher · Neon Monitor · Snapshot Manager</small></span><em>Adaptive intelligence</em></div>
+          <div><b>02</b><span><strong>Desktop</strong><small>Hyprland · Wayland · SDDM · Calamares</small></span><em>Workspace topology</em></div>
+          <div><b>01</b><span><strong>Base</strong><small>Arch Linux · BTRFS · archiso · Linux kernel</small></span><em>Minimal foundation</em></div>
+        </div>
+      </section>
 
-      <section id="facilities" className="facilities section-pad"><div className="fac-grid"><div className="fac-copy"><img className="fac-icon reveal" src={img("3.webp")} alt="Player stretching for a forehand on clay"/><h2><Lines>{["Tour Our","World-Class","Courts"]}</Lines></h2><p className="reveal">Reserve a court for focused practice, squad drills, or private sessions — and train in the same conditions you’ll compete in.</p></div><div className="courts"><Court image="1.webp" title="Redline Clay" text="A fast outdoor clay court tuned for long, physical rallies."/><Court image="4.webp" title="Harbor Court" text="A sheltered hard court built for precision and night play." blue/></div></div></section>
+      <section className="classifier section">
+        <div className="classifier-copy reveal"><Label>THM classifier</Label><h2>Three signals.<br/>One confident decision.</h2><p>Modern IDE binaries are polyglot. THM fuses behavioral and semantic evidence instead of trusting a process name.</p><div className="signal-tabs">{[["01","Process tree","High confidence"],["02","Window title","Medium confidence"],["03","Project root","Tiebreaker"]].map((s,i)=><button className={activeSignal===i?"active":""} onClick={()=>setActiveSignal(i)} key={s[0]}><b>{s[0]}</b><span>{s[1]}<small>{s[2]}</small></span></button>)}</div></div>
+        <div className="signal-visual reveal">
+          <div className="signal-core"><span>FUSION<br/>ENGINE</span><i/></div>
+          <div className={`orbit o1 ${activeSignal===0?"active":""}`}><b>/proc</b><small>children + cmdline</small></div>
+          <div className={`orbit o2 ${activeSignal===1?"active":""}`}><b>IPC</b><small>window semantics</small></div>
+          <div className={`orbit o3 ${activeSignal===2?"active":""}`}><b>inotify</b><small>project markers</small></div>
+          <div className="signal-result"><small>CLASSIFIED AS</small><b>{["SYSTEM_DEV","WEB_DEV","ANDROID_DEV"][activeSignal]}</b><span>confidence {["0.97","0.81","0.68"][activeSignal]}</span></div>
+        </div>
+      </section>
 
-      <section className="stats section-pad"><Eyebrow light>By the numbers</Eyebrow><h2><Lines>{["A club that","keeps score"]}</Lines></h2><dl>{[["24","Certified coaches"],["12","Championship courts"],["9K+","Members training"],["15","Years on the baseline"]].map((s,i)=><div className="reveal" style={{transitionDelay:`${i*110}ms`}} key={s[0]}><dd>{s[0]}</dd><dt>{s[1]}</dt></div>)}</dl></section>
+      <section className="tiers section dark-section">
+        <div className="section-head reveal"><Label>Workspace intelligence</Label><h2>Resources follow the work—<br/><em>not just the focus.</em></h2></div>
+        <div className="tier-grid">
+          <article className="reveal"><div><span>ACTIVE</span><b>70%</b></div><h3>Visible on any monitor</h3><p>Full tier-one allocation governed by the workspace composite profile.</p><code>cpu.weight = 820</code></article>
+          <article className="reveal"><div><span>PROTECTED</span><b>20%</b></div><h3>Background + live daemon</h3><p>Build daemons and LSP services remain active and are never frozen.</p><code>cgroup.freeze = 0</code></article>
+          <article className="reveal"><div><span>FREEZEABLE</span><b>5%</b></div><h3>Inactive beyond 15 min</h3><p>Non-daemon processes are surgically suspended until the workspace returns.</p><code>signal = SIGSTOP</code></article>
+        </div>
+      </section>
 
-      <section id="testimonials" className="testimonials section-pad"><Eyebrow>What players say</Eyebrow><h2><Lines>{["Loved by","the locker room"]}</Lines></h2><ul>{testimonials.map((t,i)=><li className="reveal" style={{transitionDelay:`${i*120}ms`}} key={t[1]}><span>“</span><blockquote>{t[0]}</blockquote><footer><b>{t[1]}</b><small>{t[2]}</small></footer></li>)}</ul></section>
+      <section id="ecosystem" className="ecosystem section">
+        <div className="section-head reveal"><Label>Integrated ecosystem</Label><h2>Designed as an operating system.<br/><em>Not a collection of add-ons.</em></h2></div>
+        <div className="feature-grid">{features.map((f,i)=><article className="feature reveal" style={{transitionDelay:`${(i%3)*80}ms`}} key={f.n}><div className="feature-top"><span>{f.n}</span><em>{f.tag}</em></div><h3>{f.title}</h3><p>{f.text}</p><code>{f.meta}</code></article>)}</div>
+      </section>
 
-      <footer id="contact" className="site-footer section-pad"><div className="footer-cta"><div><Eyebrow light>Get started</Eyebrow><p><Lines>{["Ready to","play?"]}</Lines></p></div><button className="pill" onClick={openModal}>Book a Visit <Arrow/></button></div><div className="footer-grid"><div><Brand/><p>A members’ tennis club and academy where focused coaching meets championship courts.</p><address><a href="mailto:play@baseline.club">play@baseline.club</a><a href="tel:+12125550148">+1 (212) 555-0148</a><span>120 Court Lane, New York</span></address></div><FooterNav title="Programs" links={["Junior Development","Performance Squad","Adult Clinics","Private Coaching"]}/><FooterNav title="Club" links={["Membership","Facilities","Events","Pro Shop"]}/><FooterNav title="Company" links={["About","Coaches","Careers","Contact"]}/></div><div className="bottom"><span>© 2026 Baseline Tennis Club. All rights reserved.</span><span>Instagram　 X　 YouTube　 LinkedIn</span><span>Privacy　 Terms</span></div></footer>
+      <section id="evaluation" className="evaluation section">
+        <div className="metrics">{metrics.map(m=><div className="reveal" key={m[1]}><strong>{m[0]}</strong><span>{m[1]}</span></div>)}</div>
+        <div className="evaluation-grid"><div className="reveal"><Label>Evaluation plan</Label><h2>Measured under real developer workloads.</h2><p>Controlled benchmarks evaluate memory efficiency, classification accuracy, response latency, daemon continuity and cross-device performance.</p></div><div className="eval-list reveal">{[["THM memory","free -m / procfs baseline"],["Classifier accuracy","Controlled polyglot IDE scenarios"],["Workspace tiers","Gradle and Cargo continuity"],["GPU switching","Detection-to-routing latency"],["TitanShare","Calibrated TCP throughput"],["TitanMirror","Capture-to-render timestamps"]].map((x,i)=><p key={x[0]}><span>0{i+1}</span><b>{x[0]}</b><em>{x[1]}</em></p>)}</div></div>
+      </section>
+
+      <section className="stack section dark-section">
+        <div className="section-head reveal"><Label>Engineering stack</Label><h2>Native where performance matters.</h2></div>
+        <div className="stack-grid reveal"><div><span>Core</span><b>C++17</b><b>Bash</b><b>Python</b><b>Kotlin</b></div><div><span>Platform</span><b>Arch Linux</b><b>Hyprland</b><b>BTRFS</b><b>Wayland</b></div><div><span>Interfaces</span><b>procfs</b><b>sysfs</b><b>inotify</b><b>DRM/KMS</b></div><div><span>Media & Network</span><b>TCP / mDNS</b><b>H.264</b><b>libavcodec</b><b>SDL2</b></div></div>
+      </section>
+
+      <section id="team" className="team section">
+        <div className="section-head reveal"><Label>Research team</Label><h2>Built at SLTC Research University.</h2><p>BSc (Hons) Software Engineering · Final Year Project · June 2026</p></div>
+        <div className="team-grid">{researchers.map((r,i)=><article className="reveal" key={r[0]}><span>0{i+1}</span><div className="avatar">{r[1].split(" ").map(x=>x[0]).join("")}</div><h3>{r[1]}</h3><p>{r[0]}</p></article>)}</div>
+      </section>
+
+      <section className="references section"><button className="ref-summary"><Label>Selected references</Label><span>Foundational systems research and platform documentation</span></button><div className="ref-grid">{refs.map((r,i)=><p key={r}><span>{String(i+1).padStart(2,"0")}</span>{r}</p>)}</div></section>
+
+      <footer className="footer"><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><h2>The operating system<br/>that understands <em>your work.</em></h2></div><div className="footer-meta"><p>Context-Aware Developer-Centric Linux Distribution with Integrated Cross-Device Ecosystem.</p><nav><a href="#research">Research</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#team">Team</a></nav></div><div className="copyright"><span>© 2026 ArchTitan OS Research Project</span><span>SLTC Research University · Sri Lanka</span><a href="#top">Back to top ↑</a></div></footer>
     </main>
 
-    <div className={`menu ${menu?"open":""}`} aria-hidden={!menu}><div className="menu-top"><Brand/><button className="close" onClick={()=>setMenu(false)}>×</button></div><nav>{[["Programs","programs"],["Facilities","facilities"],["Reviews","testimonials"],["Contact","contact"]].map(x=><a onClick={()=>setMenu(false)} href={`#${x[1]}`} key={x[0]}>{x[0]}</a>)}</nav><div className="menu-bottom"><button className="pill" onClick={openModal}>Book a Visit <Arrow/></button><span>Instagram　 X　 YouTube　 LinkedIn</span></div></div>
-    <div className={`modal ${modal?"open":""}`} aria-hidden={!modal}><button className="backdrop" onClick={closeOverlays}/><section role="dialog" aria-modal="true"><button className="modal-close" onClick={closeOverlays}>×</button><Eyebrow>Book a visit</Eyebrow><h2>Come see<br/>the courts</h2>{!sent?<form onSubmit={submit}><label>Full name<input autoFocus name="name" placeholder="Alex Rivera"/></label><label>Email<input type="email" required placeholder="you@email.com"/></label><label>What would you like to play?<textarea rows={3} placeholder="I’d love to try a private lesson on the clay courts…"/></label><button>Request a visit</button></form>:<div className="success"><i>✓</i><h3>Request received</h3><p>Thanks — our team will be in touch to lock in your visit.</p><button onClick={closeOverlays}>Done</button></div>}</section></div>
+    <aside className={`mobile-menu ${menu?"open":""}`}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)}>×</button></div><nav>{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["Team","team"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
   </>
 }
-
-function Court({image,title,text,blue=false}:{image:string,title:string,text:string,blue?:boolean}){return <figure className="court reveal"><img src={img(image)} alt={title} loading="lazy"/><figcaption className={blue?"blue":""}><b>{title}</b><small>{text}</small></figcaption></figure>}
-function FooterNav({title,links}:{title:string,links:string[]}){return <nav className="footer-nav"><h4>{title}</h4>{links.map(x=><a href="#" key={x}>{x}</a>)}</nav>}
