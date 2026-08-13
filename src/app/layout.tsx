@@ -1,41 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-export const metadata: Metadata = {
-  title: "ArchTitan OS — An Operating System That Knows What You're Running",
-  description:
-    "ArchTitan OS reallocates resources by workload type and workspace activity, not just process lists. Titan Hardware Manager, automatic GPU switching, kernel-native sandboxing and native Linux–Android interoperability — built into the OS, not bolted on.",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html
-      lang="en"
-      className={`${inter.variable} dark antialiased`}
-      suppressHydrationWarning
-    >
-      <body
-        className="min-h-screen overflow-x-hidden"
-        style={{
-          background: "#02040D",
-          color: "#F7F9FF",
-          fontFamily: "var(--font-inter), system-ui, -apple-system, sans-serif",
-        }}
-        suppressHydrationWarning
-      >
-        {children}
-      </body>
-    </html>
-  );
-}
+export const metadata:Metadata={title:"Baseline — Tennis Club & Academy",description:"Focused coaching meets championship courts at Baseline Tennis Club & Academy."};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><head><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/><link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap" rel="stylesheet"/></head><body>{children}</body></html>}
