@@ -129,7 +129,23 @@ export default function Home(){
 
       <section className="references section"><button className="ref-summary"><Label>Selected references</Label><span>Foundational systems research and platform documentation</span></button><div className="ref-grid">{refs.map((r,i)=><p key={r}><span>{String(i+1).padStart(2,"0")}</span>{r}</p>)}</div></section>
 
-      <footer className="footer"><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><h2>The operating system<br/>that understands <em>your work.</em></h2></div><div className="footer-meta"><p>Context-Aware Developer-Centric Linux Distribution with Integrated Cross-Device Ecosystem.</p><nav><a href="#research">Research</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#team">Team</a></nav></div><div className="copyright"><span>© 2026 ArchTitan OS Research Project</span><span>SLTC Research University · Sri Lanka</span><a href="#top">Back to top ↑</a></div></footer>
+      <footer className="footer">
+        <div className="footer-panel">
+          <a className="footer-wordmark" href="#top" aria-label="ArchTitan OS home">ARCHTITAN<span>OS</span><sup>©</sup></a>
+          <div className="footer-grid">
+            <div className="footer-newsletter">
+              <h3>Join the ArchTitan research community</h3>
+              <p>Follow development milestones, technical findings and future release updates.</p>
+              <form onSubmit={e=>e.preventDefault()}><label className="sr-only" htmlFor="footer-email">Email address</label><input id="footer-email" type="email" placeholder="Enter your email address" required/><button type="submit">Subscribe <i/></button></form>
+            </div>
+            <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#team">Research team</a></div>
+            <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>
+            <div className="footer-col"><span>Institution</span><p>SLTC Research University</p><p>BSc (Hons) Software Engineering</p><p>Final Year Project</p><a href="mailto:research@archtitan.dev">Contact</a></div>
+            <div className="footer-social-row"><span>Social Media</span><nav><a href="#">GitHub</a><i/> <a href="#">LinkedIn</a><i/> <a href="#">X</a><i/> <a href="mailto:research@archtitan.dev">Email</a></nav></div>
+          </div>
+          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved.</span><span>SLTC Research University · Sri Lanka</span><a href="#top">Back to top ↑</a></div>
+        </div>
+      </footer>
     </main>
 
     <aside className={`mobile-menu ${menu?"open":""}`}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)}>×</button></div><nav>{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["Team","team"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
