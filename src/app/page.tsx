@@ -1,7 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { TerminalLoader } from "@/components/TerminalLoader";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const Arrow=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>;
 const Mark=()=> <svg className="mark" viewBox="0 0 44 44" fill="none"><path d="M22 3 39 12.5v19L22 41 5 31.5v-19L22 3Z" stroke="currentColor" strokeWidth="2"/><path d="m14 28 8-17 8 17M17 22h10" stroke="currentColor" strokeWidth="2"/></svg>;
@@ -25,16 +30,46 @@ const refs=[
 
 export default function Home(){
   const [ready,setReady]=useState(false),[menu,setMenu]=useState(false),[activeSignal,setActiveSignal]=useState(0);
+  const pageRef=useRef<HTMLDivElement>(null);
   useEffect(()=>{
     scrollTo(0,0);document.documentElement.classList.add("locked");
-    const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("visible")),{threshold:.12});
-    document.querySelectorAll(".reveal").forEach(x=>io.observe(x));
     const esc=(e:KeyboardEvent)=>e.key==="Escape"&&setMenu(false);addEventListener("keydown",esc);
-    return()=>{io.disconnect();removeEventListener("keydown",esc)};
+    return()=>removeEventListener("keydown",esc);
   },[]);
   useEffect(()=>{document.documentElement.classList.toggle("locked",!ready||menu)},[ready,menu]);
+  useGSAP(()=>{
+    if(!ready||!pageRef.current)return;
+    if(matchMedia("(prefers-reduced-motion: reduce)").matches){gsap.set(".reveal",{clearProps:"all"});return;}
+    gsap.timeline({defaults:{ease:"power3.out"}})
+      .from(".nav-shell",{y:-28,autoAlpha:0,duration:.7})
+      .from(".hero-copy .status",{y:18,autoAlpha:0,duration:.55},"-=.35")
+      .from(".research-hero h1 span",{yPercent:115,autoAlpha:0,duration:.9,stagger:.11},"-=.3")
+      .from(".hero-copy > p",{y:24,autoAlpha:0,duration:.7},"-=.5")
+      .from(".hero-actions a",{y:18,autoAlpha:0,duration:.55,stagger:.1},"-=.45")
+      .from(".hero-console",{x:55,rotateY:-7,autoAlpha:0,duration:1},"-=.85")
+      .from(".console-body > *",{x:14,autoAlpha:0,duration:.35,stagger:.045},"-=.55")
+      .from(".hero-foot span",{y:10,autoAlpha:0,duration:.4,stagger:.08},"-=.4");
+    gsap.to(".hero-glow",{xPercent:-12,yPercent:8,scale:1.12,ease:"none",scrollTrigger:{trigger:".research-hero",start:"top top",end:"bottom top",scrub:1.2}});
+    gsap.to(".hero-grid",{yPercent:16,ease:"none",scrollTrigger:{trigger:".research-hero",start:"top top",end:"bottom top",scrub:1}});
+    gsap.utils.toArray<HTMLElement>(".reveal").forEach((el)=>{
+      if(el.closest(".research-hero"))return;
+      gsap.fromTo(el,{y:52},{y:0,duration:.85,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger:el,start:"top 92%",once:true}});
+    });
+    [[".feature-grid",".feature"],[".tier-grid",".tier-grid article"],[".metrics",".metrics > div"],[".team-grid",".team-grid article"]].forEach(([trigger,targets])=>{
+      gsap.fromTo(targets,{y:36},{y:0,duration:.7,stagger:.08,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger,start:"top 90%",once:true}});
+    });
+    requestAnimationFrame(()=>ScrollTrigger.refresh());
+    const move=(event:PointerEvent)=>{const x=(event.clientX/innerWidth-.5)*18,y=(event.clientY/innerHeight-.5)*18;gsap.to(".hero-console",{x,y,rotateY:x*.08,rotateX:-y*.08,duration:1.1,ease:"power3.out",overwrite:"auto"})};
+    const hero=document.querySelector<HTMLElement>(".research-hero");hero?.addEventListener("pointermove",move);
+    return()=>hero?.removeEventListener("pointermove",move);
+  },{scope:pageRef,dependencies:[ready],revertOnUpdate:true});
+  useGSAP(()=>{
+    const menuEl=pageRef.current?.querySelector(".mobile-menu");if(!menuEl)return;
+    if(menu){gsap.set(menuEl,{autoAlpha:1,y:0});gsap.fromTo(".mobile-menu nav a",{x:-30,autoAlpha:0},{x:0,autoAlpha:1,duration:.5,stagger:.07,ease:"power3.out"})}
+    else gsap.to(menuEl,{autoAlpha:0,y:-16,duration:.25,ease:"power2.inOut"});
+  },{scope:pageRef,dependencies:[menu]});
   const finish=()=>{setReady(true);document.documentElement.classList.remove("locked")};
-  return <>
+  return <div ref={pageRef}>
     {!ready&&<TerminalLoader onComplete={finish}/>} 
     <header className="nav-shell">
       <a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a>
@@ -101,19 +136,19 @@ export default function Home(){
       <section className="tiers section dark-section">
         <div className="section-head reveal"><Label>Workspace intelligence</Label><h2>Resources follow the work—<br/><em>not just the focus.</em></h2></div>
         <div className="tier-grid">
-          <article className="reveal"><div><span>ACTIVE</span><b>70%</b></div><h3>Visible on any monitor</h3><p>Full tier-one allocation governed by the workspace composite profile.</p><code>cpu.weight = 820</code></article>
-          <article className="reveal"><div><span>PROTECTED</span><b>20%</b></div><h3>Background + live daemon</h3><p>Build daemons and LSP services remain active and are never frozen.</p><code>cgroup.freeze = 0</code></article>
-          <article className="reveal"><div><span>FREEZEABLE</span><b>5%</b></div><h3>Inactive beyond 15 min</h3><p>Non-daemon processes are surgically suspended until the workspace returns.</p><code>signal = SIGSTOP</code></article>
+          <article><div><span>ACTIVE</span><b>70%</b></div><h3>Visible on any monitor</h3><p>Full tier-one allocation governed by the workspace composite profile.</p><code>cpu.weight = 820</code></article>
+          <article><div><span>PROTECTED</span><b>20%</b></div><h3>Background + live daemon</h3><p>Build daemons and LSP services remain active and are never frozen.</p><code>cgroup.freeze = 0</code></article>
+          <article><div><span>FREEZEABLE</span><b>5%</b></div><h3>Inactive beyond 15 min</h3><p>Non-daemon processes are surgically suspended until the workspace returns.</p><code>signal = SIGSTOP</code></article>
         </div>
       </section>
 
       <section id="ecosystem" className="ecosystem section">
         <div className="section-head reveal"><Label>Integrated ecosystem</Label><h2>Designed as an operating system.<br/><em>Not a collection of add-ons.</em></h2></div>
-        <div className="feature-grid">{features.map((f,i)=><article className="feature reveal" style={{transitionDelay:`${(i%3)*80}ms`}} key={f.n}><div className="feature-top"><span>{f.n}</span><em>{f.tag}</em></div><h3>{f.title}</h3><p>{f.text}</p><code>{f.meta}</code></article>)}</div>
+        <div className="feature-grid">{features.map((f)=><a className="feature" href={f.n==="01"?"/titan-hardware-manager":"#ecosystem"} key={f.n}><div className="feature-top"><span>{f.n}</span><em>{f.tag}</em></div><h3>{f.title}</h3><p>{f.text}</p><code>{f.meta}</code></a>)}</div>
       </section>
 
       <section id="evaluation" className="evaluation section">
-        <div className="metrics">{metrics.map(m=><div className="reveal" key={m[1]}><strong>{m[0]}</strong><span>{m[1]}</span></div>)}</div>
+        <div className="metrics">{metrics.map(m=><div key={m[1]}><strong>{m[0]}</strong><span>{m[1]}</span></div>)}</div>
         <div className="evaluation-grid"><div className="reveal"><Label>Evaluation plan</Label><h2>Measured under real developer workloads.</h2><p>Controlled benchmarks evaluate memory efficiency, classification accuracy, response latency, daemon continuity and cross-device performance.</p></div><div className="eval-list reveal">{[["THM memory","free -m / procfs baseline"],["Classifier accuracy","Controlled polyglot IDE scenarios"],["Workspace tiers","Gradle and Cargo continuity"],["GPU switching","Detection-to-routing latency"],["TitanShare","Calibrated TCP throughput"],["TitanMirror","Capture-to-render timestamps"]].map((x,i)=><p key={x[0]}><span>0{i+1}</span><b>{x[0]}</b><em>{x[1]}</em></p>)}</div></div>
       </section>
 
@@ -124,7 +159,7 @@ export default function Home(){
 
       <section id="team" className="team section">
         <div className="section-head reveal"><Label>Research team</Label><h2>Built at SLTC Research University.</h2><p>BSc (Hons) Software Engineering · Final Year Project · June 2026</p></div>
-        <div className="team-grid">{researchers.map((r,i)=><article className="reveal" key={r[0]}><span>0{i+1}</span><div className="avatar">{r[1].split(" ").map(x=>x[0]).join("")}</div><h3>{r[1]}</h3><p>{r[0]}</p></article>)}</div>
+        <div className="team-grid">{researchers.map((r,i)=><article key={r[0]}><span>0{i+1}</span><div className="avatar">{r[1].split(" ").map(x=>x[0]).join("")}</div><h3>{r[1]}</h3><p>{r[0]}</p></article>)}</div>
       </section>
 
       <section className="references section"><button className="ref-summary"><Label>Selected references</Label><span>Foundational systems research and platform documentation</span></button><div className="ref-grid">{refs.map((r,i)=><p key={r}><span>{String(i+1).padStart(2,"0")}</span>{r}</p>)}</div></section>
@@ -149,5 +184,5 @@ export default function Home(){
     </main>
 
     <aside className={`mobile-menu ${menu?"open":""}`}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)}>×</button></div><nav>{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["Team","team"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
-  </>
+  </div>
 }
