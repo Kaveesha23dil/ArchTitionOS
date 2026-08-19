@@ -144,7 +144,7 @@ export default function Home(){
 
       <section id="ecosystem" className="ecosystem section">
         <div className="section-head reveal"><Label>Integrated ecosystem</Label><h2>Designed as an operating system.<br/><em>Not a collection of add-ons.</em></h2></div>
-        <div className="feature-grid">{features.map((f)=><a className="feature" href={f.n==="01"?"/titan-hardware-manager":"#ecosystem"} key={f.n}><div className="feature-top"><span>{f.n}</span><em>{f.tag}</em></div><h3>{f.title}</h3><p>{f.text}</p><code>{f.meta}</code></a>)}</div>
+        <div className="feature-grid">{features.map((f)=><a className="feature" href={f.n==="01"?"/titan-hardware-manager":f.n==="04"?"/titanshare":"#ecosystem"} key={f.n}><div className="feature-top"><span>{f.n}</span><em>{f.tag}</em></div><h3>{f.title}</h3><p>{f.text}</p><code>{f.meta}</code></a>)}</div>
       </section>
 
       <section id="evaluation" className="evaluation section">
