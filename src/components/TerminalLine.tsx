@@ -51,13 +51,15 @@ export const TerminalLine: React.FC<TerminalLineProps> = ({
       );
     }
 
-    if (content.startsWith("root@vectorium")) {
+    if (content.startsWith("root@")) {
+      const parts = content.split("~");
+      const userHost = parts[0]?.trim() || "root@archtitan";
       return (
         <span>
-          <span className="text-emerald-400 font-semibold">root@vectorium</span>
+          <span className="text-emerald-400 font-semibold">{userHost}</span>
           <span className="text-zinc-400"> </span>
           <span className="text-sky-400">~</span>
-          <span className="text-zinc-200"> # </span>
+          <span className="text-zinc-200">{parts[1] || " # "}</span>
         </span>
       );
     }

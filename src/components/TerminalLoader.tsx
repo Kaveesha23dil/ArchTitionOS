@@ -104,9 +104,9 @@ const TERMINAL_LOGS: LogEntry[] = [
     delay: 250,
   },
   { id: "fin-1", text: "Starting application interface...", type: "normal", delay: 120 },
-  { id: "fin-2", text: "Loading Vectorium Labs workspace...", type: "normal", delay: 150 },
+  { id: "fin-2", text: "Loading ArchTitan OS workspace...", type: "normal", delay: 150 },
   { id: "fin-3", text: "System ready.", type: "normal", delay: 350 },
-  { id: "prompt", text: "root@vectorium ~ # ", type: "prompt", delay: 600 },
+  { id: "prompt", text: "root@archtitan ~ # ", type: "prompt", delay: 600 },
 ];
 
 export const TerminalLoader: React.FC<TerminalLoaderProps> = ({ onComplete }) => {
@@ -114,7 +114,6 @@ export const TerminalLoader: React.FC<TerminalLoaderProps> = ({ onComplete }) =>
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [displayedLines, setDisplayedLines] = useState<LogEntry[]>([]);
   const [progress, setProgress] = useState(0);
-  const [showCursor, setShowCursor] = useState(true);
 
   // Auto-scroll helper
   const scrollToBottom = () => {
