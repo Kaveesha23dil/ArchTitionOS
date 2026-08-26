@@ -126,6 +126,23 @@ export function GsapPlayground() {
             </button>
           </div>
 
+          {/* Mode Switcher */}
+          <div className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+            {(["stagger", "3d", "physics"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono capitalize transition-all ${
+                  activeTab === tab
+                    ? "bg-cyan-500 text-slate-950 font-semibold shadow-md shadow-cyan-500/20"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
           {/* Speed Selector */}
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <FastForward className="w-4 h-4 text-cyan-400" />

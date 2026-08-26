@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ArrowRight, Sparkles, Play, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Zap } from "lucide-react";
 
 gsap.registerPlugin(useGSAP);
 

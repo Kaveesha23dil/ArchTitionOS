@@ -148,6 +148,15 @@ export const ArchTitanLogo: React.FC<ArchTitanLogoProps> = ({
         {/* Re-draw T shape cleaner as one path */}
         {/* The T should appear as a light outline inside the A hollow */}
       </svg>
+
+      {showWordmark && (
+        <span className="text-[12px] font-bold tracking-[0.16em] uppercase text-[#F7F9FF]">
+          Arch Titan <span style={{ color: "#2F9DFF" }}>OS</span>
+        </span>
+      )}
+      {showInlineText && !showWordmark && (
+        <span className="sr-only">Arch Titan OS</span>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useLayoutEffect, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { NeonBackground } from "./NeonBackground";
@@ -22,7 +22,6 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
   animationReady = true,
 }) => {
   const heroRef = useRef<HTMLDivElement>(null);
-  const ctxRef = useRef<gsap.Context | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const hasAnimated = useRef(false);
 
