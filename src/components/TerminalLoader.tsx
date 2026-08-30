@@ -104,7 +104,7 @@ const TERMINAL_LOGS: LogEntry[] = [
     delay: 250,
   },
   { id: "fin-1", text: "Starting application interface...", type: "normal", delay: 120 },
-  { id: "fin-2", text: "Loading Vectorium Labs workspace...", type: "normal", delay: 150 },
+  { id: "fin-2", text: "Loading ArchTitan OS research workspace...", type: "normal", delay: 150 },
   { id: "fin-3", text: "System ready.", type: "normal", delay: 350 },
   { id: "prompt", text: "root@vectorium ~ # ", type: "prompt", delay: 600 },
 ];
@@ -204,6 +204,13 @@ export const TerminalLoader: React.FC<TerminalLoaderProps> = ({ onComplete }) =>
       aria-live="polite"
       className="fixed inset-0 z-[9999] overflow-hidden bg-black text-zinc-200 font-mono select-none"
     >
+      <button
+        type="button"
+        onClick={onComplete}
+        className="absolute bottom-4 right-4 z-10 border border-zinc-700 bg-black/80 px-4 py-2 text-xs uppercase tracking-[0.16em] text-zinc-300 transition hover:border-zinc-400 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:bottom-6 sm:right-6"
+      >
+        Skip intro
+      </button>
       {/* Terminal Main Box */}
       <div
         ref={scrollAreaRef}
