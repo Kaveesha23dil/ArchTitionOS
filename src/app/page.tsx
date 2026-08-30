@@ -21,6 +21,38 @@ const features=[
   {n:"06",title:"Developer-First Base",tag:"Complete distribution",text:"A minimal Arch Linux system with Hyprland, BTRFS snapshots, Calamares installation and a purpose-built developer environment.",meta:"archiso · BTRFS · Wayland"},
 ];
 const metrics=[["< 1 GB","Target idle RAM"],["< 100 ms","Mirror latency target"],["> 10 MB/s","Transfer throughput"],["72 h","Mixed-workload stress test"]];
+const objectives=[
+  ["01","Distribution","Build a custom Arch Linux distribution with a focused Hyprland desktop stack."],
+  ["02","Orchestration","Develop THM as a C++17 daemon for multi-signal workload classification and resource control."],
+  ["03","Topology","Manage split-screen and multi-monitor workspaces through a three-tier allocation model."],
+  ["04","Graphics","Automate hybrid GPU routing using DRM/KMS device detection and workload context."],
+  ["05","Observability","Expose lightweight hardware and process telemetry through Neon Monitor."],
+  ["06","Cross-device","Unify file transfer, remote monitoring and Android screen mirroring at OS level."],
+];
+const methodology=[
+  ["System image","archiso package manifests, post-install hooks, BTRFS and a Bash TUI installer."],
+  ["Native services","C++17 services use procfs, sysfs, inotify, cgroup v2 and Hyprland IPC."],
+  ["Android client","Kotlin and Jetpack Compose provide discovery, monitoring, capture and control."],
+  ["Validation","Controlled workload scenarios and a 72-hour mixed-workload stress test measure the system."],
+];
+const researchGaps=[
+  "No resource orchestrator models Hyprland workspace visibility and daemon lifecycle together.",
+  "Binary-name classification cannot identify the workload inside modern polyglot IDEs.",
+  "Existing approaches conflate focused-window input semantics with resource priority.",
+  "Linux-Android file sharing, monitoring and mirroring remain fragmented add-on experiences.",
+];
+const novelty=[
+  ["Workspace composite profiles","All processes in a tiled workspace contribute to one weighted resource context."],
+  ["Focus-decoupled decisions","Observed process behavior determines policy; focus remains only a supporting hint."],
+  ["Protected daemon lifecycle","Build daemons and language servers survive background workspace transitions."],
+  ["Compositor-driven orchestration","Hyprland IPC becomes a real-time operating-system resource signal."],
+];
+const futureWork=[
+  "Live THM configuration panel for profile tuning without editing TOML.",
+  "Predictive pre-warming based on workspace access patterns.",
+  "A signed package repository and public ISO distribution pipeline.",
+  "An AI_DEV profile modifier for local inference workloads.",
+];
 const researchers=[
   ["CIT-23-02-0025","Siluna Nusal"],["CIT-23-02-0127","Kaveesha Dilshan"],["CIT-23-02-0132","Chanika Anuradhi"],["CIT-23-02-0359","Zumra Hasaan"]
 ];
@@ -112,6 +144,16 @@ export default function Home(){
         </div>
       </section>
 
+      <section className="objectives section">
+        <div className="section-head reveal"><Label>Research objectives</Label><h2>Turn developer context into <em>measurable system behavior.</em></h2><p>The main objective is an adaptive Linux distribution that targets sub-1 GB idle memory while preserving active and background development work.</p></div>
+        <div className="objective-grid">{objectives.map(objective=><article key={objective[0]} className="reveal"><b>{objective[0]}</b><h3>{objective[1]}</h3><p>{objective[2]}</p></article>)}</div>
+      </section>
+
+      <section className="method section dark-section">
+        <div className="section-head reveal"><Label>Methodology</Label><h2>Built close to the kernel.<br/><em>Tested like a product.</em></h2></div>
+        <div className="method-grid">{methodology.map((item,index)=><article key={item[0]} className="reveal"><span>0{index+1}</span><div><h3>{item[0]}</h3><p>{item[1]}</p></div></article>)}</div>
+      </section>
+
       <section id="architecture" className="architecture section dark-section">
         <div className="section-head reveal"><Label>System architecture</Label><h2>One adaptive system.<br/><em>Four integrated layers.</em></h2><p>Built from the distribution base upward, each layer exposes native signals and services to the next.</p></div>
         <div className="layer-stack reveal">
@@ -147,6 +189,11 @@ export default function Home(){
         <div className="feature-grid">{features.map((f)=><a className="feature" href={f.n==="01"?"/titan-hardware-manager":f.n==="04"?"/titanshare":f.n==="05"?"/titanmirror":"#ecosystem"} key={f.n}><div className="feature-top"><span>{f.n}</span><em>{f.tag}</em></div><h3>{f.title}</h3><p>{f.text}</p><code>{f.meta}</code></a>)}</div>
       </section>
 
+      <section className="contribution section dark-section">
+        <div className="gap-panel reveal"><Label>Research gap</Label><h2>The missing layer is context.</h2><p>Existing tools can limit a process. They do not understand how developer activity spans windows, workspaces, daemons and connected devices.</p><ol>{researchGaps.map((gap,index)=><li key={gap}><span>0{index+1}</span>{gap}</li>)}</ol></div>
+        <div className="novelty-panel reveal"><Label>Novel contribution</Label><div>{novelty.map((item,index)=><article key={item[0]}><b>0{index+1}</b><h3>{item[0]}</h3><p>{item[1]}</p></article>)}</div></div>
+      </section>
+
       <section id="evaluation" className="evaluation section">
         <div className="metrics">{metrics.map(m=><div key={m[1]}><strong>{m[0]}</strong><span>{m[1]}</span></div>)}</div>
         <div className="evaluation-grid"><div className="reveal"><Label>Evaluation plan</Label><h2>Measured under real developer workloads.</h2><p>Controlled benchmarks evaluate memory efficiency, classification accuracy, response latency, daemon continuity and cross-device performance.</p></div><div className="eval-list reveal">{[["THM memory","free -m / procfs baseline"],["Classifier accuracy","Controlled polyglot IDE scenarios"],["Workspace tiers","Gradle and Cargo continuity"],["GPU switching","Detection-to-routing latency"],["TitanShare","Calibrated TCP throughput"],["TitanMirror","Capture-to-render timestamps"]].map((x,i)=><p key={x[0]}><span>0{i+1}</span><b>{x[0]}</b><em>{x[1]}</em></p>)}</div></div>
@@ -155,6 +202,15 @@ export default function Home(){
       <section className="stack section dark-section">
         <div className="section-head reveal"><Label>Engineering stack</Label><h2>Native where performance matters.</h2></div>
         <div className="stack-grid reveal"><div><span>Core</span><b>C++17</b><b>Bash</b><b>Python</b><b>Kotlin</b></div><div><span>Platform</span><b>Arch Linux</b><b>Hyprland</b><b>BTRFS</b><b>Wayland</b></div><div><span>Interfaces</span><b>procfs</b><b>sysfs</b><b>inotify</b><b>DRM/KMS</b></div><div><span>Media & Network</span><b>TCP / mDNS</b><b>H.264</b><b>libavcodec</b><b>SDL2</b></div></div>
+      </section>
+
+      <section className="roadmap section">
+        <div className="roadmap-copy reveal"><Label>Future work</Label><h2>From research prototype to a distributable platform.</h2><p>ArchTitan OS establishes the control loop and native ecosystem. The next phase makes that intelligence configurable, predictive and ready for public releases.</p></div>
+        <ol className="roadmap-list reveal">{futureWork.map((item,index)=><li key={item}><span>{String(index+1).padStart(2,"0")}</span><p>{item}</p></li>)}</ol>
+      </section>
+
+      <section className="conclusion section dark-section">
+        <Label>Conclusion</Label><p className="reveal">ArchTitan OS reframes the developer workstation as an active participant in the workflow: it observes context, protects ongoing work, adapts resources and connects devices through one coherent operating-system architecture.</p>
       </section>
 
       <section id="team" className="team section">
