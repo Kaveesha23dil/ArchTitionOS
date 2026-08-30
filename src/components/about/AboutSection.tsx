@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Cpu,
   Share2,
-  Smartphone,
   Activity,
   ShieldCheck,
   Layers,

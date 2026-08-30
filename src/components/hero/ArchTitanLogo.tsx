@@ -7,8 +7,6 @@ interface ArchTitanLogoProps {
   markSize?: number;
   /** Show the full wordmark "ARCH TITAN OS" below the mark */
   showWordmark?: boolean;
-  /** Show only the text brand inline (for navbar compact layout) */
-  showInlineText?: boolean;
   className?: string;
 }
 
@@ -24,7 +22,6 @@ interface ArchTitanLogoProps {
 export const ArchTitanLogo: React.FC<ArchTitanLogoProps> = ({
   markSize = 36,
   showWordmark = false,
-  showInlineText = true,
   className = "",
 }) => {
   const id = "atLogo";

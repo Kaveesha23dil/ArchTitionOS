@@ -11,7 +11,7 @@ export function GsapPlayground() {
   const labRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [activeTab, setActiveTab] = useState<"stagger" | "3d" | "physics">("stagger");
+  const activeTab: "stagger" | "3d" | "physics" = "stagger";
 
   useGSAP(
     () => {

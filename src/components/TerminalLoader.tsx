@@ -114,7 +114,6 @@ export const TerminalLoader: React.FC<TerminalLoaderProps> = ({ onComplete }) =>
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [displayedLines, setDisplayedLines] = useState<LogEntry[]>([]);
   const [progress, setProgress] = useState(0);
-  const [showCursor, setShowCursor] = useState(true);
 
   // Auto-scroll helper
   const scrollToBottom = () => {

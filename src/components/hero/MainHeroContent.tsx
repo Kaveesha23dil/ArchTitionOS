@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowRight, ArrowUpRight, CheckCircle, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle, Zap } from "lucide-react";
 
 const TRUST_ITEMS = [
   "No credit card required",
