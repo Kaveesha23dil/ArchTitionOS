@@ -21,9 +21,6 @@ const features=[
   {n:"06",title:"Developer-First Base",tag:"Complete distribution",text:"A minimal Arch Linux system with Hyprland, BTRFS snapshots, Calamares installation and a purpose-built developer environment.",meta:"archiso · BTRFS · Wayland"},
 ];
 const metrics=[["< 1 GB","Target idle RAM"],["< 100 ms","Mirror latency target"],["> 10 MB/s","Transfer throughput"],["72 h","Mixed-workload stress test"]];
-const researchers=[
-  ["CIT-23-02-0025","Siluna Nusal"],["CIT-23-02-0127","Kaveesha Dilshan"],["CIT-23-02-0132","Chanika Anuradhi"],["CIT-23-02-0359","Zumra Hasaan"]
-];
 const refs=[
   "Silberschatz, Galvin & Gagne — Operating System Concepts, 10th ed.","Robert Love — Linux Kernel Development, 3rd ed.","Mel Gorman — Understanding the Linux Virtual Memory Manager","Brendan Gregg — Systems Performance, 2nd ed.","Android Open Source Project — Low Memory Killer Daemon (lmkd)","Corbet, Rubini & Kroah-Hartman — Linux Device Drivers, 3rd ed."
 ];
@@ -55,7 +52,7 @@ export default function Home(){
       if(el.closest(".research-hero"))return;
       gsap.fromTo(el,{y:52},{y:0,duration:.85,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger:el,start:"top 92%",once:true}});
     });
-    [[".feature-grid",".feature"],[".tier-grid",".tier-grid article"],[".metrics",".metrics > div"],[".team-grid",".team-grid article"]].forEach(([trigger,targets])=>{
+    [[".feature-grid",".feature"],[".tier-grid",".tier-grid article"],[".metrics",".metrics > div"]].forEach(([trigger,targets])=>{
       gsap.fromTo(targets,{y:36},{y:0,duration:.7,stagger:.08,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger,start:"top 90%",once:true}});
     });
     requestAnimationFrame(()=>ScrollTrigger.refresh());
@@ -74,7 +71,7 @@ export default function Home(){
     <header className="nav-shell">
       <a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a>
       <nav className="nav-links"><a href="#research">Research</a><a href="#architecture">Architecture</a><a href="#ecosystem">Ecosystem</a><a href="#evaluation">Evaluation</a></nav>
-      <a className="nav-cta" href="#team">Meet the team <Arrow/></a>
+      <a className="nav-cta" href="#research">Explore research <Arrow/></a>
       <button className="menu-button" onClick={()=>setMenu(true)} aria-label="Open menu"><i/><i/></button>
     </header>
 
@@ -157,12 +154,7 @@ export default function Home(){
         <div className="stack-grid reveal"><div><span>Core</span><b>C++17</b><b>Bash</b><b>Python</b><b>Kotlin</b></div><div><span>Platform</span><b>Arch Linux</b><b>Hyprland</b><b>BTRFS</b><b>Wayland</b></div><div><span>Interfaces</span><b>procfs</b><b>sysfs</b><b>inotify</b><b>DRM/KMS</b></div><div><span>Media & Network</span><b>TCP / mDNS</b><b>H.264</b><b>libavcodec</b><b>SDL2</b></div></div>
       </section>
 
-      <section id="team" className="team section">
-        <div className="section-head reveal"><Label>Research team</Label><h2>Built at SLTC Research University.</h2><p>BSc (Hons) Software Engineering · Final Year Project · June 2026</p></div>
-        <div className="team-grid">{researchers.map((r,i)=><article key={r[0]}><span>0{i+1}</span><div className="avatar">{r[1].split(" ").map(x=>x[0]).join("")}</div><h3>{r[1]}</h3><p>{r[0]}</p></article>)}</div>
-      </section>
-
-      <section className="references section"><button className="ref-summary"><Label>Selected references</Label><span>Foundational systems research and platform documentation</span></button><div className="ref-grid">{refs.map((r,i)=><p key={r}><span>{String(i+1).padStart(2,"0")}</span>{r}</p>)}</div></section>
+      <section id="references" className="references section"><button className="ref-summary"><Label>Selected references</Label><span>Foundational systems research and platform documentation</span></button><div className="ref-grid">{refs.map((r,i)=><p key={r}><span>{String(i+1).padStart(2,"0")}</span>{r}</p>)}</div></section>
 
       <footer className="footer">
         <div className="footer-panel">
@@ -173,7 +165,7 @@ export default function Home(){
               <p>Follow development milestones, technical findings and future release updates.</p>
               <form onSubmit={e=>e.preventDefault()}><label className="sr-only" htmlFor="footer-email">Email address</label><input id="footer-email" type="email" placeholder="Enter your email address" required/><button type="submit">Subscribe <i/></button></form>
             </div>
-            <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#team">Research team</a></div>
+            <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#references">References</a></div>
             <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>
             <div className="footer-col"><span>Institution</span><p>SLTC Research University</p><p>BSc (Hons) Software Engineering</p><p>Final Year Project</p><a href="mailto:research@archtitan.dev">Contact</a></div>
             <div className="footer-social-row"><span>Social Media</span><nav><a href="#">GitHub</a><i/> <a href="#">LinkedIn</a><i/> <a href="#">X</a><i/> <a href="mailto:research@archtitan.dev">Email</a></nav></div>
@@ -183,6 +175,6 @@ export default function Home(){
       </footer>
     </main>
 
-    <aside className={`mobile-menu ${menu?"open":""}`}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)}>×</button></div><nav>{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["Team","team"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
+    <aside className={`mobile-menu ${menu?"open":""}`}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)}>×</button></div><nav>{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["References","references"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
   </div>
 }
