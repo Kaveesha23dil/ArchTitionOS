@@ -33,9 +33,6 @@ export function Navbar() {
             </div>
           </div>
           <div>
-            <span className="font-bold text-lg tracking-tight text-slate-100 flex items-center gap-2">
-              ARCHTITON <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">FYP OS</span>
-            </span>
           </div>
         </div>
 
