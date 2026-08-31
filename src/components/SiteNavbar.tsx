@@ -1,24 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
 const Mark = () => (
-  <svg className="mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
-    <path
-      d="M22 3 39 12.5v19L22 41 5 31.5v-19L22 3Z"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
-    <path
-      d="m14 28 8-17 8 17M17 22h10"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
-  </svg>
+  <Image
+    src="/logo.png"
+    alt="ArchTitan OS"
+    width={32}
+    height={32}
+    className="mark-logo-img"
+    priority
+  />
 );
 
 const Arrow = () => (
@@ -87,7 +84,6 @@ export function SiteNavbar({ pageBadge, sectionLinks }: SiteNavbarProps) {
   }, [menu]);
 
   const isHome = pathname === "/";
-  const badgeText = pageBadge || (isHome ? "FYP 2026" : "MODULE");
 
   return (
     <>
@@ -99,9 +95,11 @@ export function SiteNavbar({ pageBadge, sectionLinks }: SiteNavbarProps) {
               ArchTitan <b>OS</b>
             </span>
           </Link>
-          <span className="nav-badge">
-            <i /> {badgeText}
-          </span>
+          {pageBadge && (
+            <span className="nav-badge">
+              <i /> {pageBadge}
+            </span>
+          )}
         </div>
 
         {/* Desktop Primary Navigation */}
@@ -194,7 +192,7 @@ export function SiteNavbar({ pageBadge, sectionLinks }: SiteNavbarProps) {
 
         <div className="mobile-menu-status">
           <span className="status-dot" />
-          <span>SLTC Research University · Final Year Project</span>
+          <span>Adaptive Linux Operating System</span>
         </div>
 
         {/* Current Page Sections */}
@@ -256,7 +254,7 @@ export function SiteNavbar({ pageBadge, sectionLinks }: SiteNavbarProps) {
         </div>
 
         <div className="mobile-menu-footer">
-          <p>BSc (Hons) Software Engineering · June 2026</p>
+          <p>ArchTitan OS · Adaptive Computing</p>
           {isHome ? (
             <a
               href="#architecture"

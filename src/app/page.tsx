@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { TerminalLoader } from "@/components/TerminalLoader";
 import { SiteNavbar } from "@/components/SiteNavbar";
+import { NewsletterForm } from "@/components/NewsletterForm";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -265,13 +266,13 @@ export default function Home(){
 
   return <div ref={pageRef}>
     {!ready&&<TerminalLoader onComplete={finish}/>} 
-    <SiteNavbar pageBadge="FYP 2026" />
+    <SiteNavbar />
 
     <main id="top" className={ready?"site-ready":""}>
       <section className="hero research-hero">
         <div className="hero-grid"/><div className="hero-glow"/>
         <div className="hero-copy">
-          <div className="status"><i/> Final Year Research Project · 2026</div>
+          <div className="status"><i/> Adaptive Linux Distribution</div>
           <h1><span>Context-aware.</span><span>Developer-centric.</span><span className="outline">Built on Linux.</span></h1>
           <p>ArchTitan OS is an adaptive Arch Linux distribution that understands developer workloads, workspace topology and cross-device context—then allocates resources where they matter.</p>
           <div className="hero-actions"><a className="primary" href="#research">Explore the research <Arrow/></a><a className="secondary" href="#architecture">View architecture</a></div>
@@ -300,7 +301,7 @@ export default function Home(){
             <p className="event"><span className="green">✓</span> {ws.event}</p>
           </div>
         </div>
-        <div className="hero-foot"><span>SLTC Research University</span><span>BSc (Hons) Software Engineering</span><span>June 2026</span></div>
+        <div className="hero-foot"><span>Arch Linux Base</span><span>Hyprland Wayland Compositor</span><span>Adaptive Resource Engine</span></div>
       </section>
 
       <section id="research" className="intro section">
@@ -366,14 +367,13 @@ export default function Home(){
             <div className="footer-newsletter">
               <h3>Join the ArchTitan research community</h3>
               <p>Follow development milestones, technical findings and future release updates.</p>
-              <form onSubmit={e=>e.preventDefault()}><label className="sr-only" htmlFor="footer-email">Email address</label><input id="footer-email" type="email" placeholder="Enter your email address" required/><button type="submit">Subscribe <i/></button></form>
+              <NewsletterForm />
             </div>
             <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#references">References</a></div>
             <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>
-            <div className="footer-col"><span>Institution</span><p>SLTC Research University</p><p>BSc (Hons) Software Engineering</p><p>Final Year Project</p><a href="mailto:research@archtitan.dev">Contact</a></div>
             <div className="footer-social-row"><span>Social Media</span><nav><a href="#">GitHub</a><i/> <a href="#">LinkedIn</a><i/> <a href="#">X</a><i/> <a href="mailto:research@archtitan.dev">Email</a></nav></div>
           </div>
-          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved.</span><span>SLTC Research University · Sri Lanka</span><a href="#top">Back to top ↑</a></div>
+          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved.</span><a href="#top">Back to top ↑</a></div>
         </div>
       </footer>
     </main>
