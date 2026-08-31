@@ -62,17 +62,53 @@ export default function Home(){
   },{scope:pageRef,dependencies:[ready],revertOnUpdate:true});
   useGSAP(()=>{
     const menuEl=pageRef.current?.querySelector(".mobile-menu");if(!menuEl)return;
-    if(menu){gsap.set(menuEl,{autoAlpha:1,y:0});gsap.fromTo(".mobile-menu nav a",{x:-30,autoAlpha:0},{x:0,autoAlpha:1,duration:.5,stagger:.07,ease:"power3.out"})}
-    else gsap.to(menuEl,{autoAlpha:0,y:-16,duration:.25,ease:"power2.inOut"});
+    if(menu){
+      gsap.set(menuEl,{autoAlpha:1,y:0});
+      gsap.fromTo(".mobile-link",{x:-24,autoAlpha:0},{x:0,autoAlpha:1,duration:.4,stagger:.05,ease:"power3.out"});
+    } else {
+      gsap.to(menuEl,{autoAlpha:0,y:-12,duration:.22,ease:"power2.inOut"});
+    }
   },{scope:pageRef,dependencies:[menu]});
   const finish=()=>{setReady(true);document.documentElement.classList.remove("locked")};
   return <div ref={pageRef}>
     {!ready&&<TerminalLoader onComplete={finish}/>} 
-    <header className="nav-shell">
-      <a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a>
-      <nav className="nav-links"><a href="#research">Research</a><a href="#architecture">Architecture</a><a href="#ecosystem">Ecosystem</a><a href="#evaluation">Evaluation</a></nav>
-      <a className="nav-cta" href="#research">Explore research <Arrow/></a>
-      <button className="menu-button" onClick={()=>setMenu(true)} aria-label="Open menu"><i/><i/></button>
+    <header className="nav-shell" role="banner">
+      <div className="nav-left">
+        <a href="#top" className="logo" aria-label="ArchTitan OS Home">
+          <Mark/>
+          <span className="logo-text">ArchTitan <b>OS</b></span>
+        </a>
+        <span className="nav-badge"><i/> FYP 2026</span>
+      </div>
+
+      <nav className="nav-links" aria-label="Main Navigation">
+        <a href="#research">Research</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#classifier">Classifier</a>
+        <a href="#ecosystem">Ecosystem</a>
+        <a href="#evaluation">Evaluation</a>
+        <a href="#references">References</a>
+      </nav>
+
+      <div className="nav-right">
+        <div className="nav-status">
+          <span className="status-dot"/>
+          <span>Arch Linux · Hyprland</span>
+        </div>
+        <a className="nav-cta" href="#architecture">
+          <span>System Spec</span>
+          <Arrow/>
+        </a>
+        <button
+          className={`menu-button ${menu ? "active" : ""}`}
+          onClick={() => setMenu(!menu)}
+          aria-label={menu ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={menu}
+        >
+          <span className="menu-bar top"/>
+          <span className="menu-bar bot"/>
+        </button>
+      </div>
     </header>
 
     <main id="top" className={ready?"site-ready":""}>
@@ -119,7 +155,7 @@ export default function Home(){
         </div>
       </section>
 
-      <section className="classifier section">
+      <section id="classifier" className="classifier section">
         <div className="classifier-copy reveal"><Label>THM classifier</Label><h2>Three signals.<br/>One confident decision.</h2><p>Modern IDE binaries are polyglot. THM fuses behavioral and semantic evidence instead of trusting a process name.</p><div className="signal-tabs">{[["01","Process tree","High confidence"],["02","Window title","Medium confidence"],["03","Project root","Tiebreaker"]].map((s,i)=><button className={activeSignal===i?"active":""} onClick={()=>setActiveSignal(i)} key={s[0]}><b>{s[0]}</b><span>{s[1]}<small>{s[2]}</small></span></button>)}</div></div>
         <div className="signal-visual reveal">
           <div className="signal-core"><span>FUSION<br/>ENGINE</span><i/></div>
@@ -175,6 +211,54 @@ export default function Home(){
       </footer>
     </main>
 
-    <aside className={`mobile-menu ${menu?"open":""}`}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)}>×</button></div><nav>{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["References","references"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
+    <aside className={`mobile-menu ${menu ? "open" : ""}`} aria-hidden={!menu}>
+      <div className="mobile-menu-header">
+        <a href="#top" className="logo" onClick={() => setMenu(false)}>
+          <Mark/>
+          <span className="logo-text">ArchTitan <b>OS</b></span>
+        </a>
+        <button
+          className="mobile-close"
+          onClick={() => setMenu(false)}
+          aria-label="Close navigation"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div className="mobile-menu-status">
+        <span className="status-dot"/>
+        <span>SLTC Research University · Final Year Project</span>
+      </div>
+
+      <nav className="mobile-nav-links">
+        {[
+          ["01", "Research Premise", "research"],
+          ["02", "System Architecture", "architecture"],
+          ["03", "THM Classifier", "classifier"],
+          ["04", "Integrated Ecosystem", "ecosystem"],
+          ["05", "Evaluation & Metrics", "evaluation"],
+          ["06", "Selected References", "references"],
+        ].map(([num, title, hash]) => (
+          <a
+            href={`#${hash}`}
+            onClick={() => setMenu(false)}
+            key={hash}
+            className="mobile-link"
+          >
+            <span className="mobile-link-num">{num}</span>
+            <span className="mobile-link-title">{title}</span>
+            <Arrow/>
+          </a>
+        ))}
+      </nav>
+
+      <div className="mobile-menu-footer">
+        <p>BSc (Hons) Software Engineering · June 2026</p>
+        <a href="#architecture" onClick={() => setMenu(false)} className="mobile-cta">
+          Explore System Spec <Arrow/>
+        </a>
+      </div>
+    </aside>
   </div>
 }
