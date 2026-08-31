@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { TerminalLoader } from "@/components/TerminalLoader";
 import { SiteNavbar } from "@/components/SiteNavbar";
+import { NewsletterForm } from "@/components/NewsletterForm";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -366,7 +367,7 @@ export default function Home(){
             <div className="footer-newsletter">
               <h3>Join the ArchTitan research community</h3>
               <p>Follow development milestones, technical findings and future release updates.</p>
-              <form onSubmit={e=>e.preventDefault()}><label className="sr-only" htmlFor="footer-email">Email address</label><input id="footer-email" type="email" placeholder="Enter your email address" required/><button type="submit">Subscribe <i/></button></form>
+              <NewsletterForm />
             </div>
             <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#references">References</a></div>
             <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>

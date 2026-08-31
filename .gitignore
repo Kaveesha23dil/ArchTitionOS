@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Subscriber data (contains PII)
+data/subscribers.json
+
+# Local env (contains secrets)
+.env.local
