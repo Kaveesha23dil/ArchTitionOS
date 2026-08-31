@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 const Mark = () => (
   <svg className="mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
@@ -51,6 +53,8 @@ const MODULES = [
 export function SiteNavbar({ pageBadge, sectionLinks }: SiteNavbarProps) {
   const pathname = usePathname();
   const [menu, setMenu] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const esc = (e: KeyboardEvent) => {
@@ -67,12 +71,27 @@ export function SiteNavbar({ pageBadge, sectionLinks }: SiteNavbarProps) {
     };
   }, [menu]);
 
+  useGSAP(() => {
+    if (menu && drawerRef.current) {
+      gsap.fromTo(
+        drawerRef.current.querySelectorAll(".mobile-link"),
+        { x: -20, autoAlpha: 0 },
+        { x: 0, autoAlpha: 1, duration: 0.35, stagger: 0.05, ease: "power3.out" }
+      );
+      gsap.fromTo(
+        drawerRef.current.querySelectorAll(".mobile-module-card"),
+        { y: 15, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.06, ease: "back.out(1.4)", delay: 0.1 }
+      );
+    }
+  }, [menu]);
+
   const isHome = pathname === "/";
   const badgeText = pageBadge || (isHome ? "FYP 2026" : "MODULE");
 
   return (
     <>
-      <header className="nav-shell" role="banner">
+      <header ref={navRef} className="nav-shell" role="banner">
         <div className="nav-left">
           <Link href="/" className="logo" aria-label="ArchTitan OS Home">
             <Mark />
@@ -156,7 +175,7 @@ export function SiteNavbar({ pageBadge, sectionLinks }: SiteNavbarProps) {
       </header>
 
       {/* Mobile Drawer Navigation */}
-      <aside className={`mobile-menu ${menu ? "open" : ""}`} aria-hidden={!menu}>
+      <aside ref={drawerRef} className={`mobile-menu ${menu ? "open" : ""}`} aria-hidden={!menu}>
         <div className="mobile-menu-header">
           <Link href="/" className="logo" onClick={() => setMenu(false)}>
             <Mark />
