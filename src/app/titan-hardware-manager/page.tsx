@@ -5,6 +5,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { SiteNavbar } from "@/components/SiteNavbar";
 import styles from "./page.module.css";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -21,28 +22,111 @@ const policies=[
   ["FREEZEABLE","100","Inactive non-daemon processes can be suspended and restored safely."],
 ];
 
+const thmSections = [
+  { label: "Classifier", href: "#classifier" },
+  { label: "Policies", href: "#policies" },
+  { label: "Architecture", href: "#architecture" },
+];
+
 export default function TitanHardwareManagerPage(){
   const root=useRef<HTMLElement>(null);
 
   useGSAP(()=>{
     if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    gsap.timeline({defaults:{ease:"power3.out"}})
-      .from(`.${styles.eyebrow}`,{y:16,autoAlpha:0,duration:.5})
-      .from(`.${styles.hero} h1 span`,{yPercent:110,autoAlpha:0,duration:.85,stagger:.1},"-=.2")
-      .from(`.${styles.lede}`,{y:24,autoAlpha:0,duration:.65},"-=.45")
-      .from(`.${styles.heroActions} a`,{y:18,autoAlpha:0,duration:.5,stagger:.08},"-=.35")
-      .from(`.${styles.terminal}`,{x:50,autoAlpha:0,duration:.8},"-=.7");
-    gsap.utils.toArray<HTMLElement>("[data-motion]").forEach((item)=>{
-      gsap.from(item,{y:38,duration:.7,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger:item,start:"top 90%",once:true}});
+
+    // Hero entrance timeline
+    const tl = gsap.timeline({defaults:{ease:"power4.out"}});
+    tl
+      .from(`.${styles.eyebrow}`,{y:16,autoAlpha:0,duration:0.6})
+      .from(`.${styles.hero} h1 span`,{yPercent:120,autoAlpha:0,duration:0.9,stagger:0.12,ease:"power3.out"},"-=0.3")
+      .from(`.${styles.lede}`,{y:24,autoAlpha:0,duration:0.7},"-=0.5")
+      .from(`.${styles.heroActions} a`,{y:18,autoAlpha:0,duration:0.55,stagger:0.1,ease:"back.out(1.4)"},"-=0.4")
+      .from(`.${styles.terminal}`,{x:60,rotateY:-8,autoAlpha:0,scale:0.95,duration:1.1,ease:"power3.out"},"-=0.8")
+      .from(`.${styles.terminal} section > i b`,{scaleX:0,transformOrigin:"left",duration:0.8,stagger:0.15,ease:"power2.out"},"-=0.4")
+      .from(`.${styles.heroMeta} span`,{y:10,autoAlpha:0,duration:0.4,stagger:0.08},"-=0.3");
+
+    // 3D Terminal pointer tilt
+    const heroEl = root.current?.querySelector<HTMLElement>(`.${styles.hero}`);
+    const move = (e: PointerEvent) => {
+      const x = (e.clientX / innerWidth - 0.5) * 20;
+      const y = (e.clientY / innerHeight - 0.5) * 20;
+      gsap.to(`.${styles.terminal}`,{
+        x,
+        y,
+        rotateY: x * 0.1,
+        rotateX: -y * 0.1,
+        duration: 1.2,
+        ease: "power2.out",
+        overwrite: "auto"
+      });
+    };
+    heroEl?.addEventListener("pointermove", move);
+
+    // Section 01: Context Engine Signals Grid
+    gsap.fromTo(`.${styles.signalGrid} article`,{
+      autoAlpha:0,
+      y:45,
+      scale:0.96
+    },{
+      autoAlpha:1,
+      y:0,
+      scale:1,
+      duration:0.8,
+      stagger:0.12,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.signalGrid}`,start:"top 85%",once:true}
     });
+
+    // Section 02: Adaptive Policies Grid
+    gsap.fromTo(`.${styles.policyGrid} article`,{
+      autoAlpha:0,
+      y:45,
+      scale:0.96
+    },{
+      autoAlpha:1,
+      y:0,
+      scale:1,
+      duration:0.8,
+      stagger:0.12,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.policyGrid}`,start:"top 85%",once:true}
+    });
+
+    // Section 03: Control Loop sequence (Observe, Classify, Apply, Verify)
+    gsap.fromTo(`.${styles.architecture} ol li`,{
+      autoAlpha:0,
+      x:-30
+    },{
+      autoAlpha:1,
+      x:0,
+      duration:0.7,
+      stagger:0.14,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.architecture} ol`,start:"top 85%",once:true}
+    });
+
+    // Section intros reveal
+    gsap.utils.toArray<HTMLElement>(`.${styles.sectionIntro}`).forEach((el)=>{
+      gsap.fromTo(el,{autoAlpha:0,y:35},{
+        autoAlpha:1,
+        y:0,
+        duration:0.8,
+        ease:"power3.out",
+        clearProps:"transform",
+        scrollTrigger:{trigger:el,start:"top 90%",once:true}
+      });
+    });
+
+    return ()=>{
+      heroEl?.removeEventListener("pointermove", move);
+    };
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
-      <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
-      <div><a href="#classifier">Classifier</a><a href="#policies">Policies</a><a href="#architecture">Architecture</a></div>
-      <Link href="/" className={styles.back}>← Back to research</Link>
-    </nav>
+    <SiteNavbar pageBadge="THM DAEMON" sectionLinks={thmSections} />
 
     <section className={styles.hero}>
       <div className={styles.heroGrid}/>
