@@ -5,6 +5,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { SiteNavbar } from "@/components/SiteNavbar";
 import styles from "./page.module.css";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -19,6 +20,12 @@ const policies=[
   ["ACTIVE","820","Full CPU weight and responsive I/O for work visible on any monitor."],
   ["PROTECTED","420","Build daemons, language servers and long-running tasks remain alive."],
   ["FREEZEABLE","100","Inactive non-daemon processes can be suspended and restored safely."],
+];
+
+const thmSections = [
+  { label: "Classifier", href: "#classifier" },
+  { label: "Policies", href: "#policies" },
+  { label: "Architecture", href: "#architecture" },
 ];
 
 export default function TitanHardwareManagerPage(){
@@ -38,11 +45,7 @@ export default function TitanHardwareManagerPage(){
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
-      <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
-      <div><a href="#classifier">Classifier</a><a href="#policies">Policies</a><a href="#architecture">Architecture</a></div>
-      <Link href="/" className={styles.back}>← Back to research</Link>
-    </nav>
+    <SiteNavbar pageBadge="THM DAEMON" sectionLinks={thmSections} />
 
     <section className={styles.hero}>
       <div className={styles.heroGrid}/>

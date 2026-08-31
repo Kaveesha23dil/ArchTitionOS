@@ -5,11 +5,11 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { TerminalLoader } from "@/components/TerminalLoader";
+import { SiteNavbar } from "@/components/SiteNavbar";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const Arrow=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>;
-const Mark=()=> <svg className="mark" viewBox="0 0 44 44" fill="none"><path d="M22 3 39 12.5v19L22 41 5 31.5v-19L22 3Z" stroke="currentColor" strokeWidth="2"/><path d="m14 28 8-17 8 17M17 22h10" stroke="currentColor" strokeWidth="2"/></svg>;
 const Label=({children}:{children:React.ReactNode})=><div className="label"><i/>{children}</div>;
 
 const features=[
@@ -26,14 +26,12 @@ const refs=[
 ];
 
 export default function Home(){
-  const [ready,setReady]=useState(false),[menu,setMenu]=useState(false),[activeSignal,setActiveSignal]=useState(0);
+  const [ready,setReady]=useState(false),[activeSignal,setActiveSignal]=useState(0);
   const pageRef=useRef<HTMLDivElement>(null);
   useEffect(()=>{
     scrollTo(0,0);document.documentElement.classList.add("locked");
-    const esc=(e:KeyboardEvent)=>e.key==="Escape"&&setMenu(false);addEventListener("keydown",esc);
-    return()=>removeEventListener("keydown",esc);
   },[]);
-  useEffect(()=>{document.documentElement.classList.toggle("locked",!ready||menu)},[ready,menu]);
+  useEffect(()=>{document.documentElement.classList.toggle("locked",!ready)},[ready]);
   useGSAP(()=>{
     if(!ready||!pageRef.current)return;
     if(matchMedia("(prefers-reduced-motion: reduce)").matches){gsap.set(".reveal",{clearProps:"all"});return;}
@@ -60,56 +58,10 @@ export default function Home(){
     const hero=document.querySelector<HTMLElement>(".research-hero");hero?.addEventListener("pointermove",move);
     return()=>hero?.removeEventListener("pointermove",move);
   },{scope:pageRef,dependencies:[ready],revertOnUpdate:true});
-  useGSAP(()=>{
-    const menuEl=pageRef.current?.querySelector(".mobile-menu");if(!menuEl)return;
-    if(menu){
-      gsap.set(menuEl,{autoAlpha:1,y:0});
-      gsap.fromTo(".mobile-link",{x:-24,autoAlpha:0},{x:0,autoAlpha:1,duration:.4,stagger:.05,ease:"power3.out"});
-    } else {
-      gsap.to(menuEl,{autoAlpha:0,y:-12,duration:.22,ease:"power2.inOut"});
-    }
-  },{scope:pageRef,dependencies:[menu]});
   const finish=()=>{setReady(true);document.documentElement.classList.remove("locked")};
   return <div ref={pageRef}>
     {!ready&&<TerminalLoader onComplete={finish}/>} 
-    <header className="nav-shell" role="banner">
-      <div className="nav-left">
-        <a href="#top" className="logo" aria-label="ArchTitan OS Home">
-          <Mark/>
-          <span className="logo-text">ArchTitan <b>OS</b></span>
-        </a>
-        <span className="nav-badge"><i/> FYP 2026</span>
-      </div>
-
-      <nav className="nav-links" aria-label="Main Navigation">
-        <a href="#research">Research</a>
-        <a href="#architecture">Architecture</a>
-        <a href="#classifier">Classifier</a>
-        <a href="#ecosystem">Ecosystem</a>
-        <a href="#evaluation">Evaluation</a>
-        <a href="#references">References</a>
-      </nav>
-
-      <div className="nav-right">
-        <div className="nav-status">
-          <span className="status-dot"/>
-          <span>Arch Linux · Hyprland</span>
-        </div>
-        <a className="nav-cta" href="#architecture">
-          <span>System Spec</span>
-          <Arrow/>
-        </a>
-        <button
-          className={`menu-button ${menu ? "active" : ""}`}
-          onClick={() => setMenu(!menu)}
-          aria-label={menu ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={menu}
-        >
-          <span className="menu-bar top"/>
-          <span className="menu-bar bot"/>
-        </button>
-      </div>
-    </header>
+    <SiteNavbar pageBadge="FYP 2026" />
 
     <main id="top" className={ready?"site-ready":""}>
       <section className="hero research-hero">
@@ -210,55 +162,5 @@ export default function Home(){
         </div>
       </footer>
     </main>
-
-    <aside className={`mobile-menu ${menu ? "open" : ""}`} aria-hidden={!menu}>
-      <div className="mobile-menu-header">
-        <a href="#top" className="logo" onClick={() => setMenu(false)}>
-          <Mark/>
-          <span className="logo-text">ArchTitan <b>OS</b></span>
-        </a>
-        <button
-          className="mobile-close"
-          onClick={() => setMenu(false)}
-          aria-label="Close navigation"
-        >
-          ✕
-        </button>
-      </div>
-
-      <div className="mobile-menu-status">
-        <span className="status-dot"/>
-        <span>SLTC Research University · Final Year Project</span>
-      </div>
-
-      <nav className="mobile-nav-links">
-        {[
-          ["01", "Research Premise", "research"],
-          ["02", "System Architecture", "architecture"],
-          ["03", "THM Classifier", "classifier"],
-          ["04", "Integrated Ecosystem", "ecosystem"],
-          ["05", "Evaluation & Metrics", "evaluation"],
-          ["06", "Selected References", "references"],
-        ].map(([num, title, hash]) => (
-          <a
-            href={`#${hash}`}
-            onClick={() => setMenu(false)}
-            key={hash}
-            className="mobile-link"
-          >
-            <span className="mobile-link-num">{num}</span>
-            <span className="mobile-link-title">{title}</span>
-            <Arrow/>
-          </a>
-        ))}
-      </nav>
-
-      <div className="mobile-menu-footer">
-        <p>BSc (Hons) Software Engineering · June 2026</p>
-        <a href="#architecture" onClick={() => setMenu(false)} className="mobile-cta">
-          Explore System Spec <Arrow/>
-        </a>
-      </div>
-    </aside>
   </div>
 }

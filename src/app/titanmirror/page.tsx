@@ -5,6 +5,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { SiteNavbar } from "@/components/SiteNavbar";
 import styles from "./page.module.css";
 
 gsap.registerPlugin(useGSAP,ScrollTrigger);
@@ -23,6 +24,13 @@ const qualities=[
   ["NETWORK SAVER","720p","30 fps","< 120 ms","Stable mirroring on constrained local networks."],
 ];
 
+const mirrorSections = [
+  { label: "Pipeline", href: "#pipeline" },
+  { label: "Telemetry", href: "#latency" },
+  { label: "Profiles", href: "#profiles" },
+  { label: "Controls", href: "#controls" },
+];
+
 export default function TitanMirrorPage(){
   const root=useRef<HTMLElement>(null);
   useGSAP(()=>{
@@ -39,11 +47,7 @@ export default function TitanMirrorPage(){
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
-      <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
-      <div><a href="#pipeline">Pipeline</a><a href="#profiles">Profiles</a><a href="#latency">Latency</a></div>
-      <Link href="/" className={styles.back}>← Back to research</Link>
-    </nav>
+    <SiteNavbar pageBadge="TITANMIRROR" sectionLinks={mirrorSections} />
 
     <section className={styles.hero}>
       <div className={styles.grid}/>
@@ -87,7 +91,7 @@ export default function TitanMirrorPage(){
       <div className={styles.profileGrid}>{qualities.map((profile,index)=><article key={profile[0]} data-motion className={index===0?styles.active:""}><header><span>{profile[0]}</span>{index===0&&<em>RECOMMENDED</em>}</header><strong>{profile[1]}</strong><div><p><span>FRAME RATE</span><b>{profile[2]}</b></p><p><span>LATENCY TARGET</span><b>{profile[3]}</b></p></div><footer>{profile[4]}</footer></article>)}</div>
     </section>
 
-    <section className={styles.controls}>
+    <section id="controls" className={styles.controls}>
       <div className={styles.controlCopy} data-motion><p>04 / Interaction</p><h2>More than a video stream.</h2><span>TitanMirror is designed as a responsive device surface with an explicit path for input, rotation, resizing and session control.</span></div>
       <div className={styles.controlList} data-motion><p><b>01</b><span><strong>Adaptive viewport</strong><small>Resize while preserving aspect ratio and stream stability.</small></span></p><p><b>02</b><span><strong>Rotation awareness</strong><small>Follow Android orientation without restarting the session.</small></span></p><p><b>03</b><span><strong>Session controls</strong><small>Pause, resume, reconnect and inspect live stream statistics.</small></span></p><p><b>04</b><span><strong>Input-ready protocol</strong><small>A bounded channel for future keyboard, pointer and touch forwarding.</small></span></p></div>
     </section>

@@ -5,6 +5,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { SiteNavbar } from "@/components/SiteNavbar";
 import styles from "./page.module.css";
 
 gsap.registerPlugin(useGSAP,ScrollTrigger);
@@ -23,6 +24,13 @@ const flow=[
   ["TRANSFER","chunked TCP stream","Data moves directly with progress and verification."],
 ];
 
+const shareSections = [
+  { label: "Capabilities", href: "#capabilities" },
+  { label: "Flow", href: "#flow" },
+  { label: "Architecture", href: "#architecture" },
+  { label: "Trust Model", href: "#trust" },
+];
+
 export default function TitanSharePage(){
   const root=useRef<HTMLElement>(null);
   useGSAP(()=>{
@@ -38,11 +46,7 @@ export default function TitanSharePage(){
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
-      <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
-      <div><a href="#capabilities">Capabilities</a><a href="#flow">Transfer flow</a><a href="#architecture">Architecture</a></div>
-      <Link href="/" className={styles.back}>← Back to research</Link>
-    </nav>
+    <SiteNavbar pageBadge="TITANSHARE" sectionLinks={shareSections} />
 
     <section className={styles.hero}>
       <div className={styles.grid}/>
@@ -81,7 +85,7 @@ export default function TitanSharePage(){
       </div>
     </section>
 
-    <section className={styles.trust}>
+    <section id="trust" className={styles.trust}>
       <div data-motion><p>04 / Trust model</p><h2>Nearby does not mean trusted.</h2></div>
       <div className={styles.trustGrid}><article data-motion><b>01</b><h3>Explicit pairing</h3><p>A discovered device receives no privileged capability until both endpoints confirm the pairing.</p></article><article data-motion><b>02</b><h3>Scoped permissions</h3><p>File transfer, telemetry and remote controls are negotiated as separate capabilities.</p></article><article data-motion><b>03</b><h3>Local transport</h3><p>Traffic stays on the local network and does not depend on an external relay or account.</p></article></div>
     </section>
