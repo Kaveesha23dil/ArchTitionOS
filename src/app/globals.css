@@ -33,6 +33,7 @@
 .footer-newsletter button{display:flex;align-items:center;gap:.65rem;padding:.6rem 1rem;border:0;border-radius:99px;background:#fff;color:#050607;text-transform:uppercase;font-size:.6rem;font-weight:800;cursor:pointer;transition:.2s}
 .footer-newsletter button:hover{background:var(--cyan);transform:translateY(-1px)}
 .footer-newsletter button i{width:.42rem;height:.42rem;border-radius:50%;background:var(--blue)}
+.footer-newsletter button:disabled,.footer-newsletter input:disabled{cursor:wait;opacity:.65}.subscription-status{width:100%;min-height:1.2rem!important;margin:.1rem 0 0!important;font-size:.67rem!important}.subscription-status.success{color:var(--cyan)!important}.subscription-status.error{color:#ff8b96!important}
 .footer-contact{width:max-content;display:flex;align-items:center;gap:.65rem;padding:.65rem 1rem;border-radius:99px;background:#fff;color:#050607!important;text-transform:uppercase;font-size:.6rem!important;font-weight:800;transition:.2s}.footer-contact:hover{background:var(--cyan);transform:translateY(-1px)}.footer-contact i{width:.42rem;height:.42rem;border-radius:50%;background:var(--blue)}
 .footer-col{display:flex;flex-direction:column;gap:.62rem}
 .footer-col a,.footer-col p{width:auto;margin:0;color:#b6bac1;font-size:.68rem;line-height:1.45;transition:.2s}

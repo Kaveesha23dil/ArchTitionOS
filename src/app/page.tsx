@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { TerminalLoader } from "@/components/TerminalLoader";
+import { SubscribeForm } from "@/components/SubscribeForm";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -217,9 +218,9 @@ export default function Home(){
           <a className="footer-wordmark" href="#top" aria-label="ArchTitan OS home">ARCHTITAN<span>OS</span><sup>©</sup></a>
           <div className="footer-grid">
             <div className="footer-newsletter">
-              <h3>Follow the ArchTitan research</h3>
-              <p>Ask about development milestones, technical findings and future release updates.</p>
-              <a className="footer-contact" href="mailto:research@archtitan.dev">Contact the research team <i/></a>
+              <h3>Join the ArchTitan research community</h3>
+              <p>Follow development milestones, technical findings and future release updates.</p>
+              <SubscribeForm />
             </div>
             <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#references">References</a></div>
             <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>
