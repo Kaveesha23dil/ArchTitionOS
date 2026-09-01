@@ -6,11 +6,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { TerminalLoader } from "@/components/TerminalLoader";
 import { SubscribeForm } from "@/components/SubscribeForm";
+import { SiteNavbar } from "@/components/SiteNavbar";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const Arrow=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>;
-const Mark=()=> <svg className="mark" viewBox="0 0 44 44" fill="none"><path d="M22 3 39 12.5v19L22 41 5 31.5v-19L22 3Z" stroke="currentColor" strokeWidth="2"/><path d="m14 28 8-17 8 17M17 22h10" stroke="currentColor" strokeWidth="2"/></svg>;
 const Label=({children}:{children:React.ReactNode})=><div className="label"><i/>{children}</div>;
 
 const features=[
@@ -59,60 +59,255 @@ const refs=[
 ];
 
 export default function Home(){
-  const [ready,setReady]=useState(false),[menu,setMenu]=useState(false),[activeSignal,setActiveSignal]=useState(0);
+  const [ready,setReady]=useState(false);
+  const [activeSignal,setActiveSignal]=useState(0);
+  const [activeWorkspace,setActiveWorkspace]=useState(0);
   const pageRef=useRef<HTMLDivElement>(null);
+
+  const workspaceProfiles = [
+    { name: "1 ACTIVE", profile: "WEB_DEV + AI", weight: 820, weightPct: 82, mem: "64%", memPct: 64, conf: "0.94", event: "✓ gradle daemon protected across workspace switch" },
+    { name: "2 PROTECTED", profile: "SYSTEM_BUILD (Rust)", weight: 420, weightPct: 42, mem: "48%", memPct: 48, conf: "0.98", event: "✓ rust-analyzer LSP kept warm in background" },
+    { name: "3 FREEZEABLE", profile: "IDLE_CONTAINER", weight: 100, weightPct: 10, mem: "18%", memPct: 18, conf: "0.76", event: "✓ 6 idle background processes surgically suspended" },
+  ];
+
   useEffect(()=>{
-    scrollTo(0,0);document.documentElement.classList.add("locked");
-    const esc=(e:KeyboardEvent)=>e.key==="Escape"&&setMenu(false);addEventListener("keydown",esc);
-    return()=>removeEventListener("keydown",esc);
+    scrollTo(0,0);
+    document.documentElement.classList.add("locked");
   },[]);
-  useEffect(()=>{document.documentElement.classList.toggle("locked",!ready||menu)},[ready,menu]);
+
+  useEffect(()=>{
+    document.documentElement.classList.toggle("locked",!ready);
+  },[ready]);
+
   useGSAP(()=>{
     if(!ready||!pageRef.current)return;
-    if(matchMedia("(prefers-reduced-motion: reduce)").matches){gsap.set(".reveal",{clearProps:"all"});return;}
-    gsap.timeline({defaults:{ease:"power3.out"}})
-      .from(".nav-shell",{y:-28,autoAlpha:0,duration:.7})
-      .from(".hero-copy .status",{y:18,autoAlpha:0,duration:.55},"-=.35")
-      .from(".research-hero h1 span",{yPercent:115,autoAlpha:0,duration:.9,stagger:.11},"-=.3")
-      .from(".hero-copy > p",{y:24,autoAlpha:0,duration:.7},"-=.5")
-      .from(".hero-actions a",{y:18,autoAlpha:0,duration:.55,stagger:.1},"-=.45")
-      .from(".hero-console",{x:55,rotateY:-7,autoAlpha:0,duration:1},"-=.85")
-      .from(".console-body > *",{x:14,autoAlpha:0,duration:.35,stagger:.045},"-=.55")
-      .from(".hero-foot span",{y:10,autoAlpha:0,duration:.4,stagger:.08},"-=.4");
-    gsap.to(".hero-glow",{xPercent:-12,yPercent:8,scale:1.12,ease:"none",scrollTrigger:{trigger:".research-hero",start:"top top",end:"bottom top",scrub:1.2}});
-    gsap.to(".hero-grid",{yPercent:16,ease:"none",scrollTrigger:{trigger:".research-hero",start:"top top",end:"bottom top",scrub:1}});
-    gsap.utils.toArray<HTMLElement>(".reveal").forEach((el)=>{
-      if(el.closest(".research-hero"))return;
-      gsap.fromTo(el,{y:52},{y:0,duration:.85,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger:el,start:"top 92%",once:true}});
+    if(matchMedia("(prefers-reduced-motion: reduce)").matches){
+      gsap.set(".reveal",{clearProps:"all"});
+      return;
+    }
+
+    // Hero entrance choreography
+    const heroTl = gsap.timeline({defaults:{ease:"power4.out"}});
+    heroTl
+      .from(".nav-shell",{y:-32,autoAlpha:0,duration:0.8})
+      .from(".hero-copy .status",{y:20,autoAlpha:0,duration:0.6},"-=0.4")
+      .from(".research-hero h1 span",{yPercent:120,autoAlpha:0,duration:1,stagger:0.12,ease:"power3.out"},"-=0.35")
+      .from(".hero-copy > p",{y:28,autoAlpha:0,duration:0.75},"-=0.55")
+      .from(".hero-actions a",{y:20,autoAlpha:0,duration:0.6,stagger:0.1,ease:"back.out(1.4)"},"-=0.5")
+      .from(".hero-console",{x:60,rotateY:-10,rotateX:5,autoAlpha:0,scale:0.95,duration:1.1,ease:"power3.out"},"-=0.9")
+      .from(".console-top",{autoAlpha:0,y:-10,duration:0.4},"-=0.6")
+      .from(".console-body > *",{x:16,autoAlpha:0,duration:0.4,stagger:0.04},"-=0.5")
+      .from(".meter i b",{scaleX:0,transformOrigin:"left",duration:0.8,stagger:0.15,ease:"power2.out"},"-=0.3")
+      .from(".hero-foot span",{y:12,autoAlpha:0,duration:0.45,stagger:0.08},"-=0.4");
+
+    // Scroll-driven ambient parallax for hero
+    gsap.to(".hero-glow",{
+      xPercent:-15,
+      yPercent:12,
+      scale:1.18,
+      ease:"none",
+      scrollTrigger:{trigger:".research-hero",start:"top top",end:"bottom top",scrub:1.5}
+    });
+    gsap.to(".hero-grid",{
+      yPercent:20,
+      ease:"none",
+      scrollTrigger:{trigger:".research-hero",start:"top top",end:"bottom top",scrub:1}
     });
     [[".feature-grid",".feature"],[".tier-grid",".tier-grid article"],[".metrics",".metrics > div"]].forEach(([trigger,targets])=>{
       gsap.fromTo(targets,{y:36},{y:0,duration:.7,stagger:.08,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger,start:"top 90%",once:true}});
     });
+
+    // 3D Tilt for Hero Console with smoothed pointer tracking
+    const hero=document.querySelector<HTMLElement>(".research-hero");
+    const move=(event:PointerEvent)=>{
+      const x=(event.clientX/innerWidth-0.5)*22;
+      const y=(event.clientY/innerHeight-0.5)*22;
+      gsap.to(".hero-console",{
+        x,
+        y,
+        rotateY:x*0.12,
+        rotateX:-y*0.12,
+        duration:1.2,
+        ease:"power2.out",
+        overwrite:"auto"
+      });
+    };
+    hero?.addEventListener("pointermove",move);
+
+    // Section 01: Research Premise reveal
+    gsap.fromTo(".intro-grid .intro-index",{autoAlpha:0,x:-30},{
+      autoAlpha:1,
+      x:0,
+      duration:0.8,
+      ease:"power3.out",
+      scrollTrigger:{trigger:".intro-grid",start:"top 88%",once:true}
+    });
+    gsap.fromTo(".intro-copy",{autoAlpha:0,y:40},{
+      autoAlpha:1,
+      y:0,
+      duration:0.85,
+      ease:"power3.out",
+      scrollTrigger:{trigger:".intro-copy",start:"top 88%",once:true}
+    });
+    gsap.fromTo(".problem-list p",{autoAlpha:0,x:30},{
+      autoAlpha:1,
+      x:0,
+      duration:0.65,
+      stagger:0.1,
+      ease:"power3.out",
+      scrollTrigger:{trigger:".problem-list",start:"top 88%",once:true}
+    });
+
+    // Section 02: 4-Layer Architecture Stack
+    gsap.fromTo(".layer-stack > div",{
+      autoAlpha:0,
+      y:45,
+      scale:0.96,
+      rotateX:6
+    },{
+      autoAlpha:1,
+      y:0,
+      scale:1,
+      rotateX:0,
+      duration:0.85,
+      stagger:0.12,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:".layer-stack",start:"top 85%",once:true}
+    });
+
+    // Section 03: Classifier Orbits floating animation loop
+    gsap.to(".orbit.o1",{y:"-=8",x:"+=4",duration:2.8,repeat:-1,yoyo:true,ease:"sine.inOut"});
+    gsap.to(".orbit.o2",{y:"+=7",x:"-=5",duration:3.2,repeat:-1,yoyo:true,ease:"sine.inOut",delay:0.4});
+    gsap.to(".orbit.o3",{y:"-=6",x:"-=6",duration:2.5,repeat:-1,yoyo:true,ease:"sine.inOut",delay:0.8});
+    gsap.to(".signal-core i",{scale:1.2,opacity:0.3,duration:1.8,repeat:-1,yoyo:true,ease:"sine.inOut"});
+
+    // Section 04: Workspace Tiers cards
+    gsap.fromTo(".tier-grid article",{
+      autoAlpha:0,
+      y:50,
+      scale:0.95
+    },{
+      autoAlpha:1,
+      y:0,
+      scale:1,
+      duration:0.8,
+      stagger:0.14,
+      ease:"expo.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:".tier-grid",start:"top 85%",once:true}
+    });
+
+    // Section 05: Ecosystem 6 feature cards
+    gsap.fromTo(".feature-grid .feature",{
+      autoAlpha:0,
+      y:40
+    },{
+      autoAlpha:1,
+      y:0,
+      duration:0.75,
+      stagger:0.09,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:".feature-grid",start:"top 85%",once:true}
+    });
+
+    // Section 06: Evaluation metrics counters & table
+    gsap.fromTo(".metrics > div",{
+      autoAlpha:0,
+      y:35
+    },{
+      autoAlpha:1,
+      y:0,
+      duration:0.75,
+      stagger:0.1,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:".metrics",start:"top 88%",once:true}
+    });
+    gsap.fromTo(".eval-list p",{
+      autoAlpha:0,
+      x:25
+    },{
+      autoAlpha:1,
+      x:0,
+      duration:0.6,
+      stagger:0.07,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:".eval-list",start:"top 88%",once:true}
+    });
+
+    // Section 07 & 08: Stack and References
+    gsap.fromTo(".stack-grid > div",{
+      autoAlpha:0,
+      y:35
+    },{
+      autoAlpha:1,
+      y:0,
+      duration:0.7,
+      stagger:0.1,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:".stack-grid",start:"top 88%",once:true}
+    });
+    gsap.fromTo(".ref-grid p",{
+      autoAlpha:0,
+      y:20
+    },{
+      autoAlpha:1,
+      y:0,
+      duration:0.5,
+      stagger:0.06,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:".ref-grid",start:"top 90%",once:true}
+    });
+
+    // Section headers reveal on scroll
+    gsap.utils.toArray<HTMLElement>(".section-head").forEach((head)=>{
+      gsap.fromTo(head,{autoAlpha:0,y:35},{
+        autoAlpha:1,
+        y:0,
+        duration:0.8,
+        ease:"power3.out",
+        clearProps:"transform",
+        scrollTrigger:{trigger:head,start:"top 90%",once:true}
+      });
+    });
+
     requestAnimationFrame(()=>ScrollTrigger.refresh());
-    const move=(event:PointerEvent)=>{const x=(event.clientX/innerWidth-.5)*18,y=(event.clientY/innerHeight-.5)*18;gsap.to(".hero-console",{x,y,rotateY:x*.08,rotateX:-y*.08,duration:1.1,ease:"power3.out",overwrite:"auto"})};
-    const hero=document.querySelector<HTMLElement>(".research-hero");hero?.addEventListener("pointermove",move);
-    return()=>hero?.removeEventListener("pointermove",move);
+
+    return ()=>{
+      hero?.removeEventListener("pointermove",move);
+    };
   },{scope:pageRef,dependencies:[ready],revertOnUpdate:true});
-  useGSAP(()=>{
-    const menuEl=pageRef.current?.querySelector(".mobile-menu");if(!menuEl)return;
-    if(menu){gsap.set(menuEl,{autoAlpha:1,y:0});gsap.fromTo(".mobile-menu nav a",{x:-30,autoAlpha:0},{x:0,autoAlpha:1,duration:.5,stagger:.07,ease:"power3.out"})}
-    else gsap.to(menuEl,{autoAlpha:0,y:-16,duration:.25,ease:"power2.inOut"});
-  },{scope:pageRef,dependencies:[menu]});
+
+  // Smooth switch animation when clicking workspace state in hero console
+  const selectWorkspace = (idx: number) => {
+    setActiveWorkspace(idx);
+    gsap.fromTo(".console-body .meter i b", {scaleX: 0.2}, {scaleX: 1, duration: 0.6, ease: "power3.out"});
+    gsap.fromTo(".console-body .event", {autoAlpha: 0, x: -10}, {autoAlpha: 1, x: 0, duration: 0.4, ease: "power2.out"});
+  };
+
+  // Smooth switch animation when clicking classifier signal tabs
+  const selectSignal = (idx: number) => {
+    setActiveSignal(idx);
+    gsap.fromTo(".signal-result", {scale: 0.9, autoAlpha: 0.5}, {scale: 1, autoAlpha: 1, duration: 0.35, ease: "back.out(1.5)"});
+  };
+
   const finish=()=>{setReady(true);document.documentElement.classList.remove("locked")};
+  const ws = workspaceProfiles[activeWorkspace];
+
   return <div ref={pageRef}>
     {!ready&&<TerminalLoader onComplete={finish}/>} 
-    <header className="nav-shell">
-      <a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a>
-      <nav className="nav-links"><a href="#research">Research</a><a href="#architecture">Architecture</a><a href="#ecosystem">Ecosystem</a><a href="#evaluation">Evaluation</a></nav>
-      <a className="nav-cta" href="#ecosystem">Explore the system <Arrow/></a>
-      <button className="menu-button" onClick={()=>setMenu(true)} aria-label="Open menu"><i/><i/></button>
-    </header>
+    <SiteNavbar />
 
     <main id="top" className={ready?"site-ready":""}>
       <section className="hero research-hero">
         <div className="hero-grid"/><div className="hero-glow"/>
         <div className="hero-copy">
-          <div className="status"><i/> Final Year Research Project · 2026</div>
+          <div className="status"><i/> Adaptive Linux Distribution</div>
           <h1><span>Context-aware.</span><span>Developer-centric.</span><span className="outline">Built on Linux.</span></h1>
           <p>ArchTitan OS is an adaptive Arch Linux distribution that understands developer workloads, workspace topology and cross-device context—then allocates resources where they matter.</p>
           <div className="hero-actions"><a className="primary" href="#research">Explore the research <Arrow/></a><a className="secondary" href="#architecture">View architecture</a></div>
@@ -121,16 +316,27 @@ export default function Home(){
           <div className="console-top"><span><i/><i/><i/></span><b>thmctl — live context</b><em>ACTIVE</em></div>
           <div className="console-body">
             <p><span className="muted">$</span> thmctl status --workspace active</p>
-            <p><span className="blue">workspace</span> <strong>dev/web-platform</strong></p>
-            <p><span className="blue">profile</span> <span className="green">WEB_DEV + AI</span></p>
-            <p><span className="blue">confidence</span> <strong>0.94</strong> <span className="muted">[process-tree]</span></p>
-            <div className="meter"><span>CPU weight</span><i><b style={{width:"82%"}}/></i><em>820</em></div>
-            <div className="meter"><span>Memory</span><i><b style={{width:"64%"}}/></i><em>70%</em></div>
-            <div className="workspace-row"><span className="active">1 ACTIVE</span><span>2 PROTECTED</span><span>3 FREEZEABLE</span></div>
-            <p className="event"><span className="green">✓</span> gradle daemon protected across workspace switch</p>
+            <p><span className="blue">workspace</span> <strong>{ws.name.toLowerCase()}</strong></p>
+            <p><span className="blue">profile</span> <span className="green">{ws.profile}</span></p>
+            <p><span className="blue">confidence</span> <strong>{ws.conf}</strong> <span className="muted">[process-tree]</span></p>
+            <div className="meter"><span>CPU weight</span><i><b style={{width:`${ws.weightPct}%`}}/></i><em>{ws.weight}</em></div>
+            <div className="meter"><span>Memory</span><i><b style={{width:`${ws.memPct}%`}}/></i><em>{ws.mem}</em></div>
+            <div className="workspace-row">
+              {workspaceProfiles.map((w, idx) => (
+                <button
+                  type="button"
+                  key={w.name}
+                  onClick={()=>selectWorkspace(idx)}
+                  className={`workspace-btn ${activeWorkspace===idx?"active":""}`}
+                >
+                  {w.name}
+                </button>
+              ))}
+            </div>
+            <p className="event"><span className="green">✓</span> {ws.event}</p>
           </div>
         </div>
-        <div className="hero-foot"><span>SLTC Research University</span><span>BSc (Hons) Software Engineering</span><span>June 2026</span></div>
+        <div className="hero-foot"><span>Arch Linux Base</span><span>Hyprland Wayland Compositor</span><span>Adaptive Resource Engine</span></div>
       </section>
 
       <section id="research" className="intro section">
@@ -162,8 +368,8 @@ export default function Home(){
         </div>
       </section>
 
-      <section className="classifier section">
-        <div className="classifier-copy reveal"><Label>THM classifier</Label><h2>Three signals.<br/>One confident decision.</h2><p>Modern IDE binaries are polyglot. THM fuses behavioral and semantic evidence instead of trusting a process name.</p><div className="signal-tabs">{[["01","Process tree","High confidence"],["02","Window title","Medium confidence"],["03","Project root","Tiebreaker"]].map((s,i)=><button className={activeSignal===i?"active":""} onClick={()=>setActiveSignal(i)} key={s[0]}><b>{s[0]}</b><span>{s[1]}<small>{s[2]}</small></span></button>)}</div></div>
+      <section id="classifier" className="classifier section">
+        <div className="classifier-copy reveal"><Label>THM classifier</Label><h2>Three signals.<br/>One confident decision.</h2><p>Modern IDE binaries are polyglot. THM fuses behavioral and semantic evidence instead of trusting a process name.</p><div className="signal-tabs">{[["01","Process tree","High confidence"],["02","Window title","Medium confidence"],["03","Project root","Tiebreaker"]].map((s,i)=><button className={activeSignal===i?"active":""} onClick={()=>selectSignal(i)} key={s[0]}><b>{s[0]}</b><span>{s[1]}<small>{s[2]}</small></span></button>)}</div></div>
         <div className="signal-visual reveal">
           <div className="signal-core"><span>FUSION<br/>ENGINE</span><i/></div>
           <div className={`orbit o1 ${activeSignal===0?"active":""}`}><b>/proc</b><small>children + cmdline</small></div>
@@ -211,7 +417,7 @@ export default function Home(){
         <Label>Conclusion</Label><p className="reveal">ArchTitan OS reframes the developer workstation as an active participant in the workflow: it observes context, protects ongoing work, adapts resources and connects devices through one coherent operating-system architecture.</p>
       </section>
 
-      <section id="references" className="references section"><div className="ref-summary"><Label>Selected references</Label><span>Foundational systems research and platform documentation</span></div><div className="ref-grid">{refs.map((r,i)=><p key={r}><span>{String(i+1).padStart(2,"0")}</span>{r}</p>)}</div></section>
+      <section id="references" className="references section"><button className="ref-summary"><Label>Selected references</Label><span>Foundational systems research and platform documentation</span></button><div className="ref-grid">{refs.map((r,i)=><p key={r}><span>{String(i+1).padStart(2,"0")}</span>{r}</p>)}</div></section>
 
       <footer className="footer">
         <div className="footer-panel">
@@ -231,7 +437,5 @@ export default function Home(){
         </div>
       </footer>
     </main>
-
-    <aside className={`mobile-menu ${menu?"open":""}`}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)}>×</button></div><nav>{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["References","references"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
   </div>
 }

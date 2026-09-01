@@ -5,6 +5,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { SiteNavbar } from "@/components/SiteNavbar";
 import styles from "./page.module.css";
 
 gsap.registerPlugin(useGSAP,ScrollTrigger);
@@ -23,27 +24,141 @@ const qualities=[
   ["NETWORK SAVER","720p","30 fps","< 120 ms","Stable mirroring on constrained local networks."],
 ];
 
+const mirrorSections = [
+  { label: "Pipeline", href: "#pipeline" },
+  { label: "Telemetry", href: "#latency" },
+  { label: "Profiles", href: "#profiles" },
+  { label: "Controls", href: "#controls" },
+];
+
 export default function TitanMirrorPage(){
   const root=useRef<HTMLElement>(null);
   useGSAP(()=>{
     if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    gsap.timeline({defaults:{ease:"power3.out"}})
-      .from(`.${styles.kicker}`,{y:14,autoAlpha:0,duration:.45})
-      .from(`.${styles.hero} h1 span`,{yPercent:110,autoAlpha:0,duration:.85,stagger:.1},"-=.2")
-      .from(`.${styles.lede}`,{y:22,autoAlpha:0,duration:.6},"-=.4")
-      .from(`.${styles.actions} a`,{y:16,autoAlpha:0,duration:.45,stagger:.08},"-=.3")
-      .from(`.${styles.viewer}`,{x:50,rotateY:-5,autoAlpha:0,duration:.85},"-=.65");
-    gsap.to(`.${styles.scanline}`,{y:300,duration:2.8,repeat:-1,ease:"none"});
-    gsap.to(`.${styles.wave} i`,{scaleY:()=>gsap.utils.random(.25,1),duration:.45,repeat:-1,yoyo:true,stagger:{each:.05,from:"random"},ease:"sine.inOut"});
-    gsap.utils.toArray<HTMLElement>("[data-motion]").forEach(element=>gsap.from(element,{y:36,duration:.7,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger:element,start:"top 90%",once:true}}));
+
+    // Hero entrance timeline
+    const tl = gsap.timeline({defaults:{ease:"power4.out"}});
+    tl
+      .from(`.${styles.kicker}`,{y:14,autoAlpha:0,duration:0.6})
+      .from(`.${styles.hero} h1 span`,{yPercent:120,autoAlpha:0,duration:0.9,stagger:0.12,ease:"power3.out"},"-=0.3")
+      .from(`.${styles.lede}`,{y:24,autoAlpha:0,duration:0.7},"-=0.5")
+      .from(`.${styles.actions} a`,{y:18,autoAlpha:0,duration:0.55,stagger:0.1,ease:"back.out(1.4)"},"-=0.4")
+      .from(`.${styles.viewer}`,{x:60,rotateY:-8,autoAlpha:0,scale:0.95,duration:1.1,ease:"power3.out"},"-=0.8")
+      .from(`.${styles.meta} span`,{y:10,autoAlpha:0,duration:0.4,stagger:0.08},"-=0.3");
+
+    // Continuous Phone Screen Scanline animation
+    gsap.to(`.${styles.scanline}`,{
+      y:320,
+      duration:2.4,
+      repeat:-1,
+      ease:"none"
+    });
+
+    // Dynamic Live Waveform Equalizer simulation (34 bars)
+    gsap.to(`.${styles.wave} i`,{
+      scaleY:()=>gsap.utils.random(0.2, 1),
+      duration:0.4,
+      repeat:-1,
+      yoyo:true,
+      stagger:{each:0.04, from:"random"},
+      ease:"sine.inOut"
+    });
+
+    // 3D Viewer device pointer tilt
+    const heroEl = root.current?.querySelector<HTMLElement>(`.${styles.hero}`);
+    const move = (e: PointerEvent) => {
+      const x = (e.clientX / innerWidth - 0.5) * 20;
+      const y = (e.clientY / innerHeight - 0.5) * 20;
+      gsap.to(`.${styles.viewer}`,{
+        x,
+        y,
+        rotateY: x * 0.1,
+        rotateX: -y * 0.1,
+        duration: 1.2,
+        ease: "power2.out",
+        overwrite: "auto"
+      });
+    };
+    heroEl?.addEventListener("pointermove", move);
+
+    // Section 01: Frame Pipeline 5-Stage Trace
+    gsap.fromTo(`.${styles.pipeline} li`,{
+      autoAlpha:0,
+      x:-30
+    },{
+      autoAlpha:1,
+      x:0,
+      duration:0.7,
+      stagger:0.12,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.pipeline}`,start:"top 85%",once:true}
+    });
+
+    // Section 02: Telemetry Benchmarks
+    gsap.fromTo(`.${styles.telemetry}`,{
+      autoAlpha:0,
+      y:45,
+      scale:0.96
+    },{
+      autoAlpha:1,
+      y:0,
+      scale:1,
+      duration:0.85,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.telemetry}`,start:"top 85%",once:true}
+    });
+
+    // Section 03: Profiles Grid
+    gsap.fromTo(`.${styles.profileGrid} article`,{
+      autoAlpha:0,
+      y:45,
+      scale:0.96
+    },{
+      autoAlpha:1,
+      y:0,
+      scale:1,
+      duration:0.8,
+      stagger:0.12,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.profileGrid}`,start:"top 85%",once:true}
+    });
+
+    // Section 04: Interaction Controls List
+    gsap.fromTo(`.${styles.controlList} p`,{
+      autoAlpha:0,
+      x:25
+    },{
+      autoAlpha:1,
+      x:0,
+      duration:0.65,
+      stagger:0.09,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.controlList}`,start:"top 85%",once:true}
+    });
+
+    // Section intros reveal
+    gsap.utils.toArray<HTMLElement>(`.${styles.intro}`).forEach((el)=>{
+      gsap.fromTo(el,{autoAlpha:0,y:35},{
+        autoAlpha:1,
+        y:0,
+        duration:0.8,
+        ease:"power3.out",
+        clearProps:"transform",
+        scrollTrigger:{trigger:el,start:"top 90%",once:true}
+      });
+    });
+
+    return ()=>{
+      heroEl?.removeEventListener("pointermove", move);
+    };
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
-      <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
-      <div><a href="#pipeline">Pipeline</a><a href="#profiles">Profiles</a><a href="#latency">Latency</a></div>
-      <Link href="/" className={styles.back}>← Back to research</Link>
-    </nav>
+    <SiteNavbar pageBadge="TITANMIRROR" sectionLinks={mirrorSections} />
 
     <section className={styles.hero}>
       <div className={styles.grid}/>
@@ -87,7 +202,7 @@ export default function TitanMirrorPage(){
       <div className={styles.profileGrid}>{qualities.map((profile,index)=><article key={profile[0]} data-motion className={index===0?styles.active:""}><header><span>{profile[0]}</span>{index===0&&<em>RECOMMENDED</em>}</header><strong>{profile[1]}</strong><div><p><span>FRAME RATE</span><b>{profile[2]}</b></p><p><span>LATENCY TARGET</span><b>{profile[3]}</b></p></div><footer>{profile[4]}</footer></article>)}</div>
     </section>
 
-    <section className={styles.controls}>
+    <section id="controls" className={styles.controls}>
       <div className={styles.controlCopy} data-motion><p>04 / Interaction</p><h2>More than a video stream.</h2><span>TitanMirror is designed as a responsive device surface with an explicit path for input, rotation, resizing and session control.</span></div>
       <div className={styles.controlList} data-motion><p><b>01</b><span><strong>Adaptive viewport</strong><small>Resize while preserving aspect ratio and stream stability.</small></span></p><p><b>02</b><span><strong>Rotation awareness</strong><small>Follow Android orientation without restarting the session.</small></span></p><p><b>03</b><span><strong>Session controls</strong><small>Pause, resume, reconnect and inspect live stream statistics.</small></span></p><p><b>04</b><span><strong>Input-ready protocol</strong><small>A bounded channel for future keyboard, pointer and touch forwarding.</small></span></p></div>
     </section>

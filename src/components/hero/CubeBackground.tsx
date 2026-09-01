@@ -208,7 +208,7 @@ export const CubeBackground: React.FC = () => {
             SMALL CUBE — RIGHT TOP
         ══════════════════════════════ */}
         <polygon
-          points="1200,0 1340,−30 1480,0 1340,30"
+          points="1200,0 1340,-30 1480,0 1340,30"
           fill="url(#cubeTop)"
           stroke="rgba(99,214,255,0.08)"
           strokeWidth="0.8"

@@ -5,6 +5,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { SiteNavbar } from "@/components/SiteNavbar";
 import styles from "./page.module.css";
 
 gsap.registerPlugin(useGSAP,ScrollTrigger);
@@ -23,26 +24,145 @@ const flow=[
   ["TRANSFER","chunked TCP stream","Data moves directly with progress and verification."],
 ];
 
+const shareSections = [
+  { label: "Capabilities", href: "#capabilities" },
+  { label: "Flow", href: "#flow" },
+  { label: "Architecture", href: "#architecture" },
+  { label: "Trust Model", href: "#trust" },
+];
+
 export default function TitanSharePage(){
   const root=useRef<HTMLElement>(null);
   useGSAP(()=>{
     if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    gsap.timeline({defaults:{ease:"power3.out"}})
-      .from(`.${styles.kicker}`,{y:14,autoAlpha:0,duration:.45})
-      .from(`.${styles.hero} h1 span`,{yPercent:110,autoAlpha:0,duration:.85,stagger:.1},"-=.18")
-      .from(`.${styles.lede}`,{y:22,autoAlpha:0,duration:.6},"-=.4")
-      .from(`.${styles.actions} a`,{y:16,autoAlpha:0,duration:.45,stagger:.08},"-=.3")
-      .from(`.${styles.network}`,{scale:.92,autoAlpha:0,duration:.8},"-=.65");
-    gsap.to(`.${styles.packet}`,{x:90,duration:1.2,repeat:-1,yoyo:true,ease:"power1.inOut"});
-    gsap.utils.toArray<HTMLElement>("[data-motion]").forEach((element)=>gsap.from(element,{y:36,duration:.7,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger:element,start:"top 90%",once:true}}));
+
+    // Hero entrance timeline
+    const tl = gsap.timeline({defaults:{ease:"power4.out"}});
+    tl
+      .from(`.${styles.kicker}`,{y:14,autoAlpha:0,duration:0.6})
+      .from(`.${styles.hero} h1 span`,{yPercent:120,autoAlpha:0,duration:0.9,stagger:0.12,ease:"power3.out"},"-=0.3")
+      .from(`.${styles.lede}`,{y:24,autoAlpha:0,duration:0.7},"-=0.5")
+      .from(`.${styles.actions} a`,{y:18,autoAlpha:0,duration:0.55,stagger:0.1,ease:"back.out(1.4)"},"-=0.4")
+      .from(`.${styles.network}`,{scale:0.92,autoAlpha:0,duration:0.9,ease:"power3.out"},"-=0.7")
+      .from(`.${styles.device}`,{y:20,autoAlpha:0,stagger:0.15,duration:0.6,ease:"back.out(1.2)"},"-=0.5")
+      .from(`.${styles.transfer}`,{y:20,autoAlpha:0,duration:0.6,ease:"power2.out"},"-=0.3")
+      .from(`.${styles.meta} span`,{y:10,autoAlpha:0,duration:0.4,stagger:0.08},"-=0.3");
+
+    // Continuous P2P data packet trajectory loop
+    gsap.fromTo(`.${styles.packet}`,{x:-4,opacity:0.6},{
+      x:104,
+      opacity:1,
+      duration:1.4,
+      repeat:-1,
+      yoyo:true,
+      ease:"power1.inOut"
+    });
+
+    // Transfer progress bar dynamic pulse
+    gsap.to(`.${styles.transfer} > i b`,{
+      width:"88%",
+      duration:2.5,
+      repeat:-1,
+      yoyo:true,
+      ease:"sine.inOut"
+    });
+
+    // 3D Network visualizer mouse tilt
+    const heroEl = root.current?.querySelector<HTMLElement>(`.${styles.hero}`);
+    const move = (e: PointerEvent) => {
+      const x = (e.clientX / innerWidth - 0.5) * 18;
+      const y = (e.clientY / innerHeight - 0.5) * 18;
+      gsap.to(`.${styles.network}`,{
+        x,
+        y,
+        rotateY: x * 0.08,
+        rotateX: -y * 0.08,
+        duration: 1.2,
+        ease: "power2.out",
+        overwrite: "auto"
+      });
+    };
+    heroEl?.addEventListener("pointermove", move);
+
+    // Section 01: Capabilities Grid
+    gsap.fromTo(`.${styles.capabilityGrid} article`,{
+      autoAlpha:0,
+      y:45,
+      scale:0.96
+    },{
+      autoAlpha:1,
+      y:0,
+      scale:1,
+      duration:0.8,
+      stagger:0.1,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.capabilityGrid}`,start:"top 85%",once:true}
+    });
+
+    // Section 02: Connection Lifecycle Flow
+    gsap.fromTo(`.${styles.flow} li`,{
+      autoAlpha:0,
+      x:-30
+    },{
+      autoAlpha:1,
+      x:0,
+      duration:0.7,
+      stagger:0.12,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.flow}`,start:"top 85%",once:true}
+    });
+
+    // Section 03: Architecture Layers
+    gsap.fromTo(`.${styles.layers} article`,{
+      autoAlpha:0,
+      y:35
+    },{
+      autoAlpha:1,
+      y:0,
+      duration:0.75,
+      stagger:0.1,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.layers}`,start:"top 85%",once:true}
+    });
+
+    // Section 04: Trust Grid
+    gsap.fromTo(`.${styles.trustGrid} article`,{
+      autoAlpha:0,
+      y:40,
+      scale:0.96
+    },{
+      autoAlpha:1,
+      y:0,
+      scale:1,
+      duration:0.8,
+      stagger:0.12,
+      ease:"power3.out",
+      clearProps:"transform",
+      scrollTrigger:{trigger:`.${styles.trustGrid}`,start:"top 85%",once:true}
+    });
+
+    // Section intros reveal
+    gsap.utils.toArray<HTMLElement>(`.${styles.intro}`).forEach((el)=>{
+      gsap.fromTo(el,{autoAlpha:0,y:35},{
+        autoAlpha:1,
+        y:0,
+        duration:0.8,
+        ease:"power3.out",
+        clearProps:"transform",
+        scrollTrigger:{trigger:el,start:"top 90%",once:true}
+      });
+    });
+
+    return ()=>{
+      heroEl?.removeEventListener("pointermove", move);
+    };
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
-      <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
-      <div><a href="#capabilities">Capabilities</a><a href="#flow">Transfer flow</a><a href="#architecture">Architecture</a></div>
-      <Link href="/" className={styles.back}>← Back to research</Link>
-    </nav>
+    <SiteNavbar pageBadge="TITANSHARE" sectionLinks={shareSections} />
 
     <section className={styles.hero}>
       <div className={styles.grid}/>
@@ -81,7 +201,7 @@ export default function TitanSharePage(){
       </div>
     </section>
 
-    <section className={styles.trust}>
+    <section id="trust" className={styles.trust}>
       <div data-motion><p>04 / Trust model</p><h2>Nearby does not mean trusted.</h2></div>
       <div className={styles.trustGrid}><article data-motion><b>01</b><h3>Explicit pairing</h3><p>A discovered device receives no privileged capability until both endpoints confirm the pairing.</p></article><article data-motion><b>02</b><h3>Scoped permissions</h3><p>File transfer, telemetry and remote controls are negotiated as separate capabilities.</p></article><article data-motion><b>03</b><h3>Local transport</h3><p>Traffic stays on the local network and does not depend on an external relay or account.</p></article></div>
     </section>

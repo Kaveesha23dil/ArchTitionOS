@@ -106,7 +106,7 @@ const TERMINAL_LOGS: LogEntry[] = [
   { id: "fin-1", text: "Starting application interface...", type: "normal", delay: 120 },
   { id: "fin-2", text: "Loading ArchTitan OS research workspace...", type: "normal", delay: 150 },
   { id: "fin-3", text: "System ready.", type: "normal", delay: 350 },
-  { id: "prompt", text: "root@vectorium ~ # ", type: "prompt", delay: 600 },
+  { id: "prompt", text: "root@archtitan ~ # ", type: "prompt", delay: 600 },
 ];
 
 export const TerminalLoader: React.FC<TerminalLoaderProps> = ({ onComplete }) => {

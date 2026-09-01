@@ -11,7 +11,7 @@ export function GsapPlayground() {
   const labRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const activeTab: "stagger" | "3d" | "physics" = "stagger";
+  const [activeTab, setActiveTab] = useState<"stagger" | "3d" | "physics">("stagger");
 
   useGSAP(
     () => {
@@ -124,6 +124,23 @@ export function GsapPlayground() {
             >
               Restart
             </button>
+          </div>
+
+          {/* Mode Switcher */}
+          <div className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+            {(["stagger", "3d", "physics"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono capitalize transition-all ${
+                  activeTab === tab
+                    ? "bg-cyan-500 text-slate-950 font-semibold shadow-md shadow-cyan-500/20"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
 
           {/* Speed Selector */}
