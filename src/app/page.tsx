@@ -227,7 +227,7 @@ export default function Home(){
             <div className="footer-col"><span>Institution</span><p>SLTC Research University</p><p>BSc (Hons) Software Engineering</p><p>Final Year Project</p><a href="mailto:research@archtitan.dev">Contact</a></div>
             <div className="footer-social-row"><span>Project status</span><nav><span>Public channels coming soon</span><i/> <a href="mailto:research@archtitan.dev">Email the team</a></nav></div>
           </div>
-          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved.</span><span>SLTC Research University · Sri Lanka</span><a href="#top">Back to top ↑</a></div>
+          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved. Developed by <a href="https://kaveesha-portfolio-khaki.vercel.app/" target="_blank" rel="noopener noreferrer">Kaveesha Dilshan</a>.</span><span>SLTC Research University · Sri Lanka</span><a href="#top">Back to top ↑</a></div>
         </div>
       </footer>
     </main>
