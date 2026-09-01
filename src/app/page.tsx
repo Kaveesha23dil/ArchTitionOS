@@ -430,7 +430,6 @@ export default function Home(){
             </div>
             <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#references">References</a></div>
             <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>
-            <div className="footer-col"><span>Institution</span><p>SLTC Research University</p><p>BSc (Hons) Software Engineering</p><p>Final Year Project</p><a href="mailto:research@archtitan.dev">Contact</a></div>
             <div className="footer-social-row"><span>Project status</span><nav><span>Public channels coming soon</span><i/> <a href="mailto:research@archtitan.dev">Email the team</a></nav></div>
           </div>
           <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved. Developed by <a href="https://kaveesha-portfolio-khaki.vercel.app/" target="_blank" rel="noopener noreferrer">Kaveesha Dilshan</a>.</span><span>SLTC Research University · Sri Lanka</span><a href="#top">Back to top ↑</a></div>
