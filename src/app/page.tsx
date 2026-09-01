@@ -5,8 +5,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { TerminalLoader } from "@/components/TerminalLoader";
+import { SubscribeForm } from "@/components/SubscribeForm";
 import { SiteNavbar } from "@/components/SiteNavbar";
-import { NewsletterForm } from "@/components/NewsletterForm";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -22,6 +22,38 @@ const features=[
   {n:"06",title:"Developer-First Base",tag:"Complete distribution",text:"A minimal Arch Linux system with Hyprland, BTRFS snapshots, Calamares installation and a purpose-built developer environment.",meta:"archiso · BTRFS · Wayland"},
 ];
 const metrics=[["< 1 GB","Target idle RAM"],["< 100 ms","Mirror latency target"],["> 10 MB/s","Transfer throughput"],["72 h","Mixed-workload stress test"]];
+const objectives=[
+  ["01","Distribution","Build a custom Arch Linux distribution with a focused Hyprland desktop stack."],
+  ["02","Orchestration","Develop THM as a C++17 daemon for multi-signal workload classification and resource control."],
+  ["03","Topology","Manage split-screen and multi-monitor workspaces through a three-tier allocation model."],
+  ["04","Graphics","Automate hybrid GPU routing using DRM/KMS device detection and workload context."],
+  ["05","Observability","Expose lightweight hardware and process telemetry through Neon Monitor."],
+  ["06","Cross-device","Unify file transfer, remote monitoring and Android screen mirroring at OS level."],
+];
+const methodology=[
+  ["System image","archiso package manifests, post-install hooks, BTRFS and a Bash TUI installer."],
+  ["Native services","C++17 services use procfs, sysfs, inotify, cgroup v2 and Hyprland IPC."],
+  ["Android client","Kotlin and Jetpack Compose provide discovery, monitoring, capture and control."],
+  ["Validation","Controlled workload scenarios and a 72-hour mixed-workload stress test measure the system."],
+];
+const researchGaps=[
+  "No resource orchestrator models Hyprland workspace visibility and daemon lifecycle together.",
+  "Binary-name classification cannot identify the workload inside modern polyglot IDEs.",
+  "Existing approaches conflate focused-window input semantics with resource priority.",
+  "Linux-Android file sharing, monitoring and mirroring remain fragmented add-on experiences.",
+];
+const novelty=[
+  ["Workspace composite profiles","All processes in a tiled workspace contribute to one weighted resource context."],
+  ["Focus-decoupled decisions","Observed process behavior determines policy; focus remains only a supporting hint."],
+  ["Protected daemon lifecycle","Build daemons and language servers survive background workspace transitions."],
+  ["Compositor-driven orchestration","Hyprland IPC becomes a real-time operating-system resource signal."],
+];
+const futureWork=[
+  "Live THM configuration panel for profile tuning without editing TOML.",
+  "Predictive pre-warming based on workspace access patterns.",
+  "A signed package repository and public ISO distribution pipeline.",
+  "An AI_DEV profile modifier for local inference workloads.",
+];
 const refs=[
   "Silberschatz, Galvin & Gagne — Operating System Concepts, 10th ed.","Robert Love — Linux Kernel Development, 3rd ed.","Mel Gorman — Understanding the Linux Virtual Memory Manager","Brendan Gregg — Systems Performance, 2nd ed.","Android Open Source Project — Low Memory Killer Daemon (lmkd)","Corbet, Rubini & Kroah-Hartman — Linux Device Drivers, 3rd ed."
 ];
@@ -80,6 +112,9 @@ export default function Home(){
       yPercent:20,
       ease:"none",
       scrollTrigger:{trigger:".research-hero",start:"top top",end:"bottom top",scrub:1}
+    });
+    [[".feature-grid",".feature"],[".tier-grid",".tier-grid article"],[".metrics",".metrics > div"]].forEach(([trigger,targets])=>{
+      gsap.fromTo(targets,{y:36},{y:0,duration:.7,stagger:.08,ease:"power3.out",clearProps:"transform",scrollTrigger:{trigger,start:"top 90%",once:true}});
     });
 
     // 3D Tilt for Hero Console with smoothed pointer tracking
@@ -313,6 +348,16 @@ export default function Home(){
         </div>
       </section>
 
+      <section className="objectives section">
+        <div className="section-head reveal"><Label>Research objectives</Label><h2>Turn developer context into <em>measurable system behavior.</em></h2><p>The main objective is an adaptive Linux distribution that targets sub-1 GB idle memory while preserving active and background development work.</p></div>
+        <div className="objective-grid">{objectives.map(objective=><article key={objective[0]} className="reveal"><b>{objective[0]}</b><h3>{objective[1]}</h3><p>{objective[2]}</p></article>)}</div>
+      </section>
+
+      <section className="method section dark-section">
+        <div className="section-head reveal"><Label>Methodology</Label><h2>Built close to the kernel.<br/><em>Tested like a product.</em></h2></div>
+        <div className="method-grid">{methodology.map((item,index)=><article key={item[0]} className="reveal"><span>0{index+1}</span><div><h3>{item[0]}</h3><p>{item[1]}</p></div></article>)}</div>
+      </section>
+
       <section id="architecture" className="architecture section dark-section">
         <div className="section-head reveal"><Label>System architecture</Label><h2>One adaptive system.<br/><em>Four integrated layers.</em></h2><p>Built from the distribution base upward, each layer exposes native signals and services to the next.</p></div>
         <div className="layer-stack reveal">
@@ -345,7 +390,12 @@ export default function Home(){
 
       <section id="ecosystem" className="ecosystem section">
         <div className="section-head reveal"><Label>Integrated ecosystem</Label><h2>Designed as an operating system.<br/><em>Not a collection of add-ons.</em></h2></div>
-        <div className="feature-grid">{features.map((f)=><a className="feature" href={f.n==="01"?"/titan-hardware-manager":f.n==="04"?"/titanshare":f.n==="05"?"/titanmirror":"#ecosystem"} key={f.n}><div className="feature-top"><span>{f.n}</span><em>{f.tag}</em></div><h3>{f.title}</h3><p>{f.text}</p><code>{f.meta}</code></a>)}</div>
+        <div className="feature-grid">{features.map((f)=><a className="feature" href={f.n==="01"?"/titan-hardware-manager":f.n==="02"?"/auto-gpu-switcher":f.n==="03"?"/neon-monitor":f.n==="04"?"/titanshare":f.n==="05"?"/titanmirror":"/developer-first-base"} key={f.n}><div className="feature-top"><span>{f.n}</span><em>{f.tag}</em></div><h3>{f.title}</h3><p>{f.text}</p><code>{f.meta}</code></a>)}</div>
+      </section>
+
+      <section className="contribution section dark-section">
+        <div className="gap-panel reveal"><Label>Research gap</Label><h2>The missing layer is context.</h2><p>Existing tools can limit a process. They do not understand how developer activity spans windows, workspaces, daemons and connected devices.</p><ol>{researchGaps.map((gap,index)=><li key={gap}><span>0{index+1}</span>{gap}</li>)}</ol></div>
+        <div className="novelty-panel reveal"><Label>Novel contribution</Label><div>{novelty.map((item,index)=><article key={item[0]}><b>0{index+1}</b><h3>{item[0]}</h3><p>{item[1]}</p></article>)}</div></div>
       </section>
 
       <section id="evaluation" className="evaluation section">
@@ -358,6 +408,15 @@ export default function Home(){
         <div className="stack-grid reveal"><div><span>Core</span><b>C++17</b><b>Bash</b><b>Python</b><b>Kotlin</b></div><div><span>Platform</span><b>Arch Linux</b><b>Hyprland</b><b>BTRFS</b><b>Wayland</b></div><div><span>Interfaces</span><b>procfs</b><b>sysfs</b><b>inotify</b><b>DRM/KMS</b></div><div><span>Media & Network</span><b>TCP / mDNS</b><b>H.264</b><b>libavcodec</b><b>SDL2</b></div></div>
       </section>
 
+      <section className="roadmap section">
+        <div className="roadmap-copy reveal"><Label>Future work</Label><h2>From research prototype to a distributable platform.</h2><p>ArchTitan OS establishes the control loop and native ecosystem. The next phase makes that intelligence configurable, predictive and ready for public releases.</p></div>
+        <ol className="roadmap-list reveal">{futureWork.map((item,index)=><li key={item}><span>{String(index+1).padStart(2,"0")}</span><p>{item}</p></li>)}</ol>
+      </section>
+
+      <section className="conclusion section dark-section">
+        <Label>Conclusion</Label><p className="reveal">ArchTitan OS reframes the developer workstation as an active participant in the workflow: it observes context, protects ongoing work, adapts resources and connects devices through one coherent operating-system architecture.</p>
+      </section>
+
       <section id="references" className="references section"><button className="ref-summary"><Label>Selected references</Label><span>Foundational systems research and platform documentation</span></button><div className="ref-grid">{refs.map((r,i)=><p key={r}><span>{String(i+1).padStart(2,"0")}</span>{r}</p>)}</div></section>
 
       <footer className="footer">
@@ -367,13 +426,13 @@ export default function Home(){
             <div className="footer-newsletter">
               <h3>Join the ArchTitan research community</h3>
               <p>Follow development milestones, technical findings and future release updates.</p>
-              <NewsletterForm />
+              <SubscribeForm />
             </div>
             <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#references">References</a></div>
             <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>
-            <div className="footer-social-row"><span>Social Media</span><nav><a href="#">GitHub</a><i/> <a href="#">LinkedIn</a><i/> <a href="#">X</a><i/> <a href="mailto:research@archtitan.dev">Email</a></nav></div>
+            <div className="footer-social-row"><span>Project status</span><nav><span>Public channels coming soon</span><i/> <a href="mailto:research@archtitan.dev">Email the team</a></nav></div>
           </div>
-          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved.</span><a href="#top">Back to top ↑</a></div>
+          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved. Developed by <a href="https://kaveesha-portfolio-khaki.vercel.app/" target="_blank" rel="noopener noreferrer">Kaveesha Dilshan</a>.</span><span>SLTC Research University · Sri Lanka</span><a href="#top">Back to top ↑</a></div>
         </div>
       </footer>
     </main>
