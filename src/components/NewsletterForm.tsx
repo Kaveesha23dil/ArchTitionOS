@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, FormEvent } from "react";
 import gsap from "gsap";
@@ -35,24 +35,52 @@ export function NewsletterForm() {
     setMessage("");
 
     try {
-      const res = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: trimmed }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
+      let res: Response;
+      try {
+        res = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: trimmed }),
+        });
+      } catch {
+        // fetch itself failed — server unreachable or network down
         setStatus("error");
-        setMessage(data?.error || "Something went wrong. Please try again.");
+        setMessage("Could not reach the server. Please check your connection and try again.");
+        return;
+      }
+
+      let data: Record<string, string> = {};
+      try {
+        data = await res.json();
+      } catch {
+        // Response wasn't valid JSON
+        setStatus("error");
+        setMessage("Received an unexpected response. Please try again.");
+        return;
+      }
+
+      if (res.status === 409) {
+        setStatus("error");
+        setMessage("This email is already subscribed. Check your inbox for the welcome email.");
+      } else if (res.status === 400) {
+        setStatus("error");
+        setMessage(data?.error || "Please enter a valid email address.");
+      } else if (!res.ok) {
+        setStatus("error");
+        setMessage(data?.error || "Something went wrong on our end. Please try again in a moment.");
       } else {
         setStatus("success");
         setMessage(data?.warning || "");
       }
     } catch {
       setStatus("error");
-      setMessage("Network error. Please check your connection and try again.");
+      setMessage("Something went wrong. Please try again.");
     }
+  }
+
+  function handleRetry() {
+    setStatus("idle");
+    setMessage("");
   }
 
   if (status === "success") {
@@ -92,7 +120,10 @@ export function NewsletterForm() {
         )}
       </button>
       {status === "error" && message && (
-        <p id="newsletter-error" className="newsletter-error" role="alert">{message}</p>
+        <div className="newsletter-error-row">
+          <p id="newsletter-error" className="newsletter-error" role="alert">{message}</p>
+          <button type="button" className="newsletter-retry" onClick={handleRetry}>Try again</button>
+        </div>
       )}
     </form>
   );
