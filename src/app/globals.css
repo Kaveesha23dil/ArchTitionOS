@@ -57,7 +57,10 @@
 .newsletter-form button:hover:not(:disabled){background:var(--cyan);transform:translateY(-1px)}
 .newsletter-form button:disabled{opacity:.65;cursor:not-allowed}
 .newsletter-form button i{width:.42rem;height:.42rem;border-radius:50%;background:var(--blue)}
-.newsletter-error{width:100%;margin:-.2rem 0 0;font-size:.68rem;color:#ff8080;line-height:1.5}
+.newsletter-error{width:100%;margin:0;font-size:.68rem;color:#ff8080;line-height:1.5}
+.newsletter-error-row{width:100%;display:flex;align-items:flex-start;gap:.7rem;flex-wrap:wrap}
+.newsletter-retry{flex-shrink:0;margin-top:.05rem;padding:.28rem .65rem;border:1px solid rgba(255,128,128,.4);border-radius:99px;background:transparent;color:#ff8080;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;transition:all .2s ease;font-family:inherit}
+.newsletter-retry:hover{background:rgba(255,128,128,.12);border-color:rgba(255,128,128,.7)}
 
 /* Spinner */
 .newsletter-spinner{display:inline-block;width:1rem;height:1rem;border:2px solid rgba(5,6,7,.3);border-top-color:#050607;border-radius:50%;animation:newsletter-spin .7s linear infinite}
