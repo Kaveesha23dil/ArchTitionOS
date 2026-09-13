@@ -373,7 +373,7 @@ export default function Home(){
             <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>
             <div className="footer-social-row"><span>Social Media</span><nav><a href="#">GitHub</a><i/> <a href="#">LinkedIn</a><i/> <a href="#">X</a><i/> <a href="mailto:research@archtitan.dev">Email</a></nav></div>
           </div>
-          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved.</span><a href="#top">Back to top ↑</a></div>
+          <div className="copyright"><span>© 2026 ArchTitan OS. Designed for adaptive computing. All rights reserved. Designed by <a href="https://kaveesha-portfolio-khaki.vercel.app/" target="_blank" rel="noopener noreferrer">Kaveesha Dilshan</a> · suatbel</span><a href="#top">Back to top ↑</a></div>
         </div>
       </footer>
     </main>
