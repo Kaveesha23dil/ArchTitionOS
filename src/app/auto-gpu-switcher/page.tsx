@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
+import { StructuredData } from "@/components/StructuredData";
 import { SystemFeaturePage, type FeaturePageData } from "@/components/feature/SystemFeaturePage";
+import { createPageMetadata, pageSeo } from "@/lib/site";
+import { pageSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Auto GPU Switcher",
-  description: "Workload-aware hybrid GPU routing for ArchTitan OS using DRM/KMS detection and PRIME offload.",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.gpuSwitcher);
 
 const data: FeaturePageData = {
   accent: "#ff7a55",
@@ -29,5 +29,5 @@ const data: FeaturePageData = {
 };
 
 export default function AutoGpuSwitcherPage() {
-  return <SystemFeaturePage data={data} />;
+  return <><StructuredData data={pageSchema(pageSeo.gpuSwitcher)} /><SystemFeaturePage data={data} /></>;
 }

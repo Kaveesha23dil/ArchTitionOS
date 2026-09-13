@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
+import { StructuredData } from "@/components/StructuredData";
 import { SystemFeaturePage, type FeaturePageData } from "@/components/feature/SystemFeaturePage";
+import { createPageMetadata, pageSeo } from "@/lib/site";
+import { pageSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Neon Monitor",
-  description: "A lightweight native CPU, memory, thermal and process telemetry surface for ArchTitan OS.",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.neonMonitor);
 
 const data: FeaturePageData = {
   accent: "#5ce1a8",
@@ -29,5 +29,5 @@ const data: FeaturePageData = {
 };
 
 export default function NeonMonitorPage() {
-  return <SystemFeaturePage data={data} />;
+  return <><StructuredData data={pageSchema(pageSeo.neonMonitor)} /><SystemFeaturePage data={data} /></>;
 }

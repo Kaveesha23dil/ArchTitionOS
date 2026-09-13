@@ -38,7 +38,7 @@ export default function TitanHardwareManagerPage(){
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
+    <nav className={styles.nav} aria-label="Titan Hardware Manager navigation">
       <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
       <div><a href="#classifier">Classifier</a><a href="#policies">Policies</a><a href="#architecture">Architecture</a></div>
       <Link href="/" className={styles.back}>← Back to research</Link>
@@ -81,6 +81,6 @@ export default function TitanHardwareManagerPage(){
       <ol data-motion><li><b>01</b><span><strong>Observe</strong><small>/proc · Hyprland IPC · inotify</small></span></li><li><b>02</b><span><strong>Classify</strong><small>Composite profile + confidence score</small></span></li><li><b>03</b><span><strong>Apply</strong><small>cgroup v2 · nice · ionice · process signals</small></span></li><li><b>04</b><span><strong>Verify</strong><small>Telemetry, thresholds and safe rollback</small></span></li></ol>
     </section>
 
-    <footer className={styles.footer}><p>ArchTitan OS / Titan Hardware Manager</p><h2>Context-aware resource orchestration for developer-first Linux.</h2><Link href="/">Return to the research overview →</Link></footer>
+    <footer className={styles.footer}><p>ArchTitan OS / Titan Hardware Manager</p><h2>Context-aware resource orchestration for developer-first Linux.</h2><Link href="/">Return to the ArchTitan OS research overview →</Link><span> · </span><Link href="/titanshare">Explore TitanShare&apos;s Linux–Android workflow →</Link></footer>
   </main>
 }

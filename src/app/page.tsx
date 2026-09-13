@@ -103,7 +103,7 @@ export default function Home(){
     {!ready&&<TerminalLoader onComplete={finish}/>} 
     <header className="nav-shell">
       <a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a>
-      <nav className="nav-links"><a href="#research">Research</a><a href="#architecture">Architecture</a><a href="#ecosystem">Ecosystem</a><a href="#evaluation">Evaluation</a></nav>
+      <nav className="nav-links" aria-label="Primary navigation"><a href="#research">Research</a><a href="#architecture">Architecture</a><a href="#ecosystem">Ecosystem</a><a href="#evaluation">Evaluation</a></nav>
       <a className="nav-cta" href="#ecosystem">Explore the system <Arrow/></a>
       <button className="menu-button" onClick={()=>setMenu(true)} aria-label="Open menu"><i/><i/></button>
     </header>
@@ -223,7 +223,7 @@ export default function Home(){
               <SubscribeForm />
             </div>
             <div className="footer-col"><span>Research</span><a href="#research">Research premise</a><a href="#architecture">Architecture</a><a href="#evaluation">Evaluation</a><a href="#references">References</a></div>
-            <div className="footer-col"><span>System</span><a href="#ecosystem">Titan Hardware Manager</a><a href="#ecosystem">TitanShare</a><a href="#ecosystem">TitanMirror</a><a href="#ecosystem">Neon Monitor</a></div>
+            <div className="footer-col"><span>System</span><a href="/titan-hardware-manager">Titan Hardware Manager</a><a href="/titanshare">TitanShare</a><a href="/titanmirror">TitanMirror</a><a href="/neon-monitor">Neon Monitor</a></div>
             <div className="footer-col"><span>Institution</span><p>SLTC Research University</p><p>BSc (Hons) Software Engineering</p><p>Final Year Project</p><a href="mailto:research@archtitan.dev">Contact</a></div>
             <div className="footer-social-row"><span>Project status</span><nav><span>Public channels coming soon</span><i/> <a href="mailto:research@archtitan.dev">Email the team</a></nav></div>
           </div>
@@ -232,6 +232,6 @@ export default function Home(){
       </footer>
     </main>
 
-    <aside className={`mobile-menu ${menu?"open":""}`}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)}>×</button></div><nav>{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["References","references"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
+    <aside className={`mobile-menu ${menu?"open":""}`} aria-hidden={!menu}><div><a href="#top" className="logo"><Mark/><span>ArchTitan <b>OS</b></span></a><button onClick={()=>setMenu(false)} aria-label="Close menu">×</button></div><nav aria-label="Mobile navigation">{[["Research","research"],["Architecture","architecture"],["Ecosystem","ecosystem"],["Evaluation","evaluation"],["References","references"]].map(x=><a href={`#${x[1]}`} onClick={()=>setMenu(false)} key={x[0]}>{x[0]} <Arrow/></a>)}</nav><p>Final Year Research Project · 2026</p></aside>
   </div>
 }

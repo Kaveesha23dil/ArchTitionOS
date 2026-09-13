@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
+import { StructuredData } from "@/components/StructuredData";
 import { SystemFeaturePage, type FeaturePageData } from "@/components/feature/SystemFeaturePage";
+import { createPageMetadata, pageSeo } from "@/lib/site";
+import { pageSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Developer-First Base",
-  description: "The minimal Arch Linux, Hyprland and BTRFS foundation beneath the ArchTitan OS developer environment.",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.developerBase);
 
 const data: FeaturePageData = {
   accent: "#8b7cff",
@@ -29,5 +29,5 @@ const data: FeaturePageData = {
 };
 
 export default function DeveloperFirstBasePage() {
-  return <SystemFeaturePage data={data} />;
+  return <><StructuredData data={pageSchema(pageSeo.developerBase)} /><SystemFeaturePage data={data} /></>;
 }

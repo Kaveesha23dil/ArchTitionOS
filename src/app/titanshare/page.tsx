@@ -38,7 +38,7 @@ export default function TitanSharePage(){
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
+    <nav className={styles.nav} aria-label="TitanShare navigation">
       <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
       <div><a href="#capabilities">Capabilities</a><a href="#flow">Transfer flow</a><a href="#architecture">Architecture</a></div>
       <Link href="/" className={styles.back}>← Back to research</Link>
@@ -86,6 +86,6 @@ export default function TitanSharePage(){
       <div className={styles.trustGrid}><article data-motion><b>01</b><h3>Explicit pairing</h3><p>A discovered device receives no privileged capability until both endpoints confirm the pairing.</p></article><article data-motion><b>02</b><h3>Scoped permissions</h3><p>File transfer, telemetry and remote controls are negotiated as separate capabilities.</p></article><article data-motion><b>03</b><h3>Local transport</h3><p>Traffic stays on the local network and does not depend on an external relay or account.</p></article></div>
     </section>
 
-    <footer className={styles.footer}><p>ArchTitan OS / TitanShare</p><h2>Move work between devices without moving it through the cloud.</h2><Link href="/">Return to the research overview →</Link></footer>
+    <footer className={styles.footer}><p>ArchTitan OS / TitanShare</p><h2>Move work between devices without moving it through the cloud.</h2><Link href="/">Return to the ArchTitan OS research overview →</Link><span> · </span><Link href="/titanmirror">Explore TitanMirror&apos;s Android-to-Linux streaming pipeline →</Link></footer>
   </main>
 }

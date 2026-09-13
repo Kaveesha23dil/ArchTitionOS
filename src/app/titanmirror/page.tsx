@@ -39,7 +39,7 @@ export default function TitanMirrorPage(){
   },{scope:root});
 
   return <main ref={root} className={styles.page}>
-    <nav className={styles.nav}>
+    <nav className={styles.nav} aria-label="TitanMirror navigation">
       <Link href="/" className={styles.brand}><i/> ArchTitan <b>OS</b></Link>
       <div><a href="#pipeline">Pipeline</a><a href="#profiles">Profiles</a><a href="#latency">Latency</a></div>
       <Link href="/" className={styles.back}>← Back to research</Link>
@@ -92,6 +92,6 @@ export default function TitanMirrorPage(){
       <div className={styles.controlList} data-motion><p><b>01</b><span><strong>Adaptive viewport</strong><small>Resize while preserving aspect ratio and stream stability.</small></span></p><p><b>02</b><span><strong>Rotation awareness</strong><small>Follow Android orientation without restarting the session.</small></span></p><p><b>03</b><span><strong>Session controls</strong><small>Pause, resume, reconnect and inspect live stream statistics.</small></span></p><p><b>04</b><span><strong>Input-ready protocol</strong><small>A bounded channel for future keyboard, pointer and touch forwarding.</small></span></p></div>
     </section>
 
-    <footer className={styles.footer}><p>ArchTitan OS / TitanMirror</p><h2>Your Android workspace, rendered natively on Linux.</h2><Link href="/">Return to the research overview →</Link></footer>
+    <footer className={styles.footer}><p>ArchTitan OS / TitanMirror</p><h2>Your Android workspace, rendered natively on Linux.</h2><Link href="/">Return to the ArchTitan OS research overview →</Link><span> · </span><Link href="/titan-hardware-manager">Explore adaptive Linux resource management →</Link></footer>
   </main>
 }

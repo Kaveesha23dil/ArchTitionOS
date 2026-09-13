@@ -16,7 +16,7 @@ export type FeaturePageData = {
 export function SystemFeaturePage({ data }: { data: FeaturePageData }) {
   return (
     <main className={styles.page} style={{ "--accent": data.accent } as React.CSSProperties}>
-      <nav className={styles.nav}>
+      <nav className={styles.nav} aria-label={`${data.title.join(" ")} navigation`}>
         <Link href="/" className={styles.brand}><i /> ArchTitan <b>OS</b></Link>
         <div><a href="#capabilities">Capabilities</a><a href="#pipeline">Pipeline</a><a href="#principles">Principles</a></div>
         <Link href="/#ecosystem" className={styles.back}>← All features</Link>
